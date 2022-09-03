@@ -1,0 +1,19 @@
+services:
+  database:
+    container_name: db
+    image: postgres:14
+    restart: always
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_USER: 'user'
+      POSTGRES_PASSWORD: 'password'
+      POSTGRES_HOST: 'db'
+    volumes:
+      - ./var/bddata:/var/lib/postgresql/data
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    logging:
+      options:
+        max-file: "3"
+        max-size: "20m"

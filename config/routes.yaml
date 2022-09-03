@@ -1,3 +1,6 @@
 controllers:
     resource: ../src/Controller/
     type: attribute
+controller_categories:
+    resource: ../src/Categories/Infrastructure
+    type: attribute
