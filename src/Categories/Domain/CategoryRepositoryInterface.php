@@ -6,6 +6,6 @@ use App\Categories\Domain\Category;
 
 interface CategoryRepositoryInterface
 {
-    public function findByName(string $name): Category | null;
+    public function findByName(string $name): ?Category;
     public function save(Category $category): void;
 }

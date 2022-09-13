@@ -48,13 +48,14 @@ class CategoryRepository extends ServiceEntityRepository implements CategoryRepo
         $this->getEntityManager()->flush();
     }
 
-    public function findByName(string $name): Category | null
+    public function findByName(string $name): ?Category
     {
         $doctrineCategory = $this->findOneBy(['name' => $name]);
-        if (!$doctrineCategory) return null;
+        if (!$doctrineCategory) {
+            return null;
+        }
 
-        $category = new Category($doctrineCategory->name);
-        return $category;
+        return new Category($doctrineCategory->name, $doctrineCategory->id);
     }
 
 //    /**

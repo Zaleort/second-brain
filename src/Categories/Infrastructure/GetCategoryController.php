@@ -32,7 +32,6 @@ class GetCategoryController extends AbstractController
         return JsonResponse::fromJsonString($this->serializer->serialize(
             $category,
             'json',
-            ['groups' => ['category']]
         ));
     }
 }
