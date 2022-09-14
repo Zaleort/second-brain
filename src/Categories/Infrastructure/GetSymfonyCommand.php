@@ -19,7 +19,7 @@ class GetSymfonyCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $name = $input->getArgument('name');
-        $command = new CreateCategoryCommand($name);
+        $command = new CreateCategoryCommand('', $name);
         $this->handler->execute($command);
         $output->writeln('Increíble');
         return 0;

@@ -4,25 +4,25 @@ namespace App\Categories\Domain;
 
 class Category
 {
-    public function __construct(private readonly string $name, private readonly ?int $id = null)
+    public function __construct(private readonly string $id, private readonly string $name)
     {
     }
 
     /**
      * @throws ForbiddenNameException
      */
-    public static function create(string $name): self
+    public static function create(string $id, string $name): self
     {
         if ($name === 'Brokalia') {
             throw new ForbiddenNameException('El nombre no puede contener Brokalia');
         }
-        return new self($name);
+        return new self($id, $name);
     }
 
     /**
-     * @return int|null
+     * @return string
      */
-    public function getId(): ?int
+    public function getId(): string
     {
         return $this->id;
     }

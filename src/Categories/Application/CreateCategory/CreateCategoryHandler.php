@@ -24,7 +24,7 @@ class CreateCategoryHandler
             throw new CategoryAlreadyExistsException('La categoría ya existe');
         }
 
-        $category = Category::create($command->name);
+        $category = Category::create($command->id, $command->name);
         $this->categoryRepository->save($category);
     }
 }

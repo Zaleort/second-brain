@@ -9,14 +9,13 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Table(name: 'category')]
-#[ORM\Entity(repositoryClass: CategoryRepository::class)]
+#[ORM\Entity()]
 class DoctrineCategory
 {
     #[Groups('category')]
     #[ORM\Id]
-    #[ORM\GeneratedValue]
     #[ORM\Column]
-    public ?int $id = null;
+    public string $id;
 
     #[Groups('category')]
     #[ORM\Column(length: 255, unique: true)]

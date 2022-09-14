@@ -8,6 +8,7 @@ use App\Categories\Application\CreateCategory\CreateCategoryHandler;
 use App\Categories\Domain\CustomException;
 use App\Categories\Domain\ForbiddenNameException;
 use Exception;
+use Ramsey\Uuid\Uuid;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -25,7 +26,7 @@ class CreateCategoryController extends AbstractController
     public  function  createCategory(Request $request): Response
     {
         $data = json_decode($request->getContent(), true, 512, JSON_THROW_ON_ERROR);
-        $command = new CreateCategoryCommand($data['name']);
+        $command = new CreateCategoryCommand(Uuid::uuid4()->toString(), $data['name']);
 
         try {
             $this->handler->execute($command);
