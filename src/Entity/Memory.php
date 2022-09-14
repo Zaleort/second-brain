@@ -39,7 +39,7 @@ class Memory
     private ?\DateTimeImmutable $modifiedAt = null;
 
     #[Groups('memory')]
-    #[ORM\ManyToMany(targetEntity: DoctrineCategory::class, inversedBy: 'memories')]
+    #[ORM\ManyToMany(targetEntity: DoctrineCategory::class)]
     private Collection $categories;
 
     public function __construct()

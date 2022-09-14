@@ -21,12 +21,7 @@ class DoctrineCategory
     #[ORM\Column(length: 255, unique: true)]
     public ?string $name = null;
 
-    #[Groups('category_memories')]
-    #[ORM\ManyToMany(targetEntity: Memory::class, mappedBy: 'categories')]
-    public Collection $memories;
-
     public function __construct()
     {
-        $this->memories = new ArrayCollection();
     }
 }
