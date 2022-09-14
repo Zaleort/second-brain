@@ -1,16 +1,15 @@
 <?php
 
-namespace App\Entity;
+namespace App\Memories\Infrastructure;
 
 use App\Categories\Infrastructure\DoctrineCategory;
-use App\Repository\MemoryRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: MemoryRepository::class)]
-class Memory
+class DoctrineMemory
 {
     #[Groups('memory')]
     #[ORM\Id]

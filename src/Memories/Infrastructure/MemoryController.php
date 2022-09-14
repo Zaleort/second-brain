@@ -1,10 +1,8 @@
 <?php
 declare(strict_types=1);
-namespace App\Controller;
+namespace App\Memories\Infrastructure;
 
 use App\Categories\Infrastructure\CategoryRepository;
-use App\Entity\Memory;
-use App\Repository\MemoryRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -39,7 +37,7 @@ class MemoryController extends AbstractController
         $memory = $this->memoryRepository->find($id);
         if (!$memory)
         {
-            throw $this->createNotFoundException('Memory not found with id '.$id);
+            throw $this->createNotFoundException('DoctrineMemory not found with id '.$id);
         }
 
         return JsonResponse::fromJsonString($this->serializer->serialize(
@@ -57,7 +55,7 @@ class MemoryController extends AbstractController
     {
         $data = json_decode($request->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
-        $memory = new Memory();
+        $memory = new DoctrineMemory();
         $memory->setContent($data['content']);
         $memory->setName($data['name']);
         $memory->setType($data['type']);
@@ -81,10 +79,10 @@ class MemoryController extends AbstractController
     ): Response
     {
         $entityManager = $this->managerRegistry->getManager();
-        $memory = $entityManager->getRepository(Memory::class)->find($id);
+        $memory = $entityManager->getRepository(DoctrineMemory::class)->find($id);
 
         if (!$memory) {
-            throw $this->createNotFoundException('Memory not found for id '.$id);
+            throw $this->createNotFoundException('DoctrineMemory not found for id '.$id);
         }
 
         $data = json_decode($request->getContent(), true, 512, JSON_THROW_ON_ERROR);
@@ -107,10 +105,10 @@ class MemoryController extends AbstractController
     public function deleteMemory(int $id): Response
     {
         $entityManager = $this->managerRegistry->getManager();
-        $memory = $entityManager->getRepository(Memory::class)->find($id);
+        $memory = $entityManager->getRepository(DoctrineMemory::class)->find($id);
 
         if (!$memory) {
-            throw $this->createNotFoundException('Memory not found for id '.$id);
+            throw $this->createNotFoundException('DoctrineMemory not found for id '.$id);
         }
 
         $entityManager->remove($memory);
