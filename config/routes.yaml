@@ -1,5 +1,5 @@
-controllers:
-    resource: ../src/Controller/
+controllers_memories:
+    resource: ../src/Memories/Infrastructure
     type: attribute
 controller_categories:
     resource: ../src/Categories/Infrastructure

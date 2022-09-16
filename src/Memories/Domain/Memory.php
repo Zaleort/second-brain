@@ -2,81 +2,62 @@
 
 namespace App\Memories\Domain;
 
+use App\Categories\Domain\CustomException;
 use DateTimeImmutable;
 
 class Memory {
-    public function __construct(
+    function __construct(
+        private readonly string $id,
         private readonly string $name,
-        private readonly int $type,
+        private readonly MemoryType $type,
         private readonly DateTimeImmutable $createdAt,
         private readonly array $categories,
-        private readonly ?int $id,
         private readonly ?string $content,
         private readonly ?DateTimeImmutable $modifiedAt,
     ) {}
 
-    public function create(
+    public static function create(
+        string $id,
         string $name,
-        int $type,
+        MemoryType $type,
         array $categories,
         ?string $content,
     ): self
     {
         $createdAt = new DateTimeImmutable();
-        return new self($name, $type, $createdAt, $categories, null, $content, null);
+        return new self($id, $name, $type, $createdAt, $categories, $content, null);
     }
 
-    /**
-     * @return int
-     */
-    public function getId(): int
+    public function getId(): string
     {
         return $this->id;
     }
 
-    /**
-     * @return string
-     */
     public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * @return int
-     */
-    public function getType(): int
+    public function getType(): MemoryType
     {
         return $this->type;
     }
 
-    /**
-     * @return DateTimeImmutable
-     */
     public function getCreatedAt(): DateTimeImmutable
     {
         return $this->createdAt;
     }
 
-    /**
-     * @return array
-     */
     public function getCategories(): array
     {
         return $this->categories;
     }
 
-    /**
-     * @return string|null
-     */
     public function getContent(): ?string
     {
         return $this->content;
     }
 
-    /**
-     * @return DateTimeImmutable|null
-     */
     public function getModifiedAt(): ?DateTimeImmutable
     {
         return $this->modifiedAt;
