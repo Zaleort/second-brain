@@ -3,37 +3,38 @@
 namespace App\Memories\Domain;
 
 use App\Categories\Domain\CustomException;
+use App\Shared\Domain\UuidValueObject;
 use DateTimeImmutable;
 
 class Memory {
     function __construct(
-        private readonly string $id,
-        private readonly string $name,
+        private readonly UuidValueObject $id,
+        private readonly MemoryName $name,
         private readonly MemoryType $type,
         private readonly DateTimeImmutable $createdAt,
-        private readonly array $categories,
-        private readonly ?string $content,
+        private readonly MemoryCategories $categories,
+        private readonly ?MemoryContent $content,
         private readonly ?DateTimeImmutable $modifiedAt,
     ) {}
 
     public static function create(
-        string $id,
-        string $name,
+        UuidValueObject $id,
+        MemoryName $name,
         MemoryType $type,
-        array $categories,
-        ?string $content,
+        MemoryCategories $categories,
+        ?MemoryContent $content,
     ): self
     {
         $createdAt = new DateTimeImmutable();
         return new self($id, $name, $type, $createdAt, $categories, $content, null);
     }
 
-    public function getId(): string
+    public function getId(): UuidValueObject
     {
         return $this->id;
     }
 
-    public function getName(): string
+    public function getName(): MemoryName
     {
         return $this->name;
     }
@@ -48,12 +49,12 @@ class Memory {
         return $this->createdAt;
     }
 
-    public function getCategories(): array
+    public function getCategories(): MemoryCategories
     {
         return $this->categories;
     }
 
-    public function getContent(): ?string
+    public function getContent(): ?MemoryContent
     {
         return $this->content;
     }

@@ -2,30 +2,53 @@
 
 namespace App\Memories\Infrastructure;
 
+use App\Categories\Domain\CustomException;
 use App\Categories\Infrastructure\DoctrineCategory;
 use App\Memories\Domain\Memory;
+use App\Memories\Domain\MemoryCategories;
+use App\Memories\Domain\MemoryContent;
+use App\Memories\Domain\MemoryName;
 use App\Memories\Domain\MemoryRepositoryInterface;
 use App\Memories\Domain\MemoryType;
+use App\Shared\Domain\UuidGenerator;
+use App\Shared\Domain\UuidValueObject;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 
 class MemoryRepository implements MemoryRepositoryInterface
 {
-    public function __construct(private EntityManagerInterface $entityManager) {}
+    public function __construct(private EntityManagerInterface $entityManager, private UuidGenerator $uuidGenerator) {}
 
+    /**
+     * @throws CustomException
+     */
     public function findById(int $id): Memory
     {
         // TODO: Implement findById() method.
-        return new Memory('', 0, MemoryType::link(), new \DateTimeImmutable(), [], null, null);
+        return new Memory(
+            UuidValueObject::fromValue($this->uuidGenerator->random()),
+            MemoryName::fromValue(''),
+            MemoryType::link(),
+            new \DateTimeImmutable(),
+            new MemoryCategories(),
+            null,
+            null
+        );
     }
 
+    /**
+     * @throws CustomException
+     */
     public function findAll(): array
     {
         $doctrineMemories = $this->entityManager->getRepository(DoctrineMemory::class)->findAll();
         return $this->getMemoriesFromDoctrine($doctrineMemories);
     }
 
+    /**
+     * @throws CustomException
+     */
     public function findByCriteria(array $criterias): array
     {
         $doctrineMemories = $this->entityManager->getRepository(DoctrineMemory::class)->findBy($criterias);
@@ -35,16 +58,16 @@ class MemoryRepository implements MemoryRepositoryInterface
     public function save(Memory $memory): void
     {
         $doctrineMemory = $this->entityManager->find(DoctrineMemory::class, $memory->getId()) ?? new DoctrineMemory();
-        $doctrineMemory->id = $memory->getId();
-        $doctrineMemory->name = $memory->getName();
+        $doctrineMemory->id = $memory->getId()->value;
+        $doctrineMemory->name = $memory->getName()->value;
         $doctrineMemory->type = $memory->getType()->value;
-        $doctrineMemory->content = $memory->getContent();
+        $doctrineMemory->content = $memory->getContent()->value;
         $doctrineMemory->createdAt = $memory->getCreatedAt();
         $doctrineMemory->modifiedAt = $memory->getModifiedAt();
 
         $doctrineMemory->categories->clear();
-        foreach ($memory->getCategories() as $categoryId) {
-            $category = $this->entityManager->find(DoctrineCategory::class, $categoryId);
+        foreach ($memory->getCategories()->getValues() as $categoryId) {
+            $category = $this->entityManager->find(DoctrineCategory::class, $categoryId->value);
             $doctrineMemory->categories->add($category);
         }
 
@@ -60,23 +83,24 @@ class MemoryRepository implements MemoryRepositoryInterface
     /**
      * @param array $doctrineMemories
      * @return array
+     * @throws CustomException
      */
     public function getMemoriesFromDoctrine(array $doctrineMemories): array
     {
         $memories = [];
         foreach ($doctrineMemories as $doctrineMemory) {
-            $categories = [];
+            $categories = new MemoryCategories();
             foreach ($doctrineMemory->categories as $category) {
-                $categories[] = $category->id;
+                $categories->add(UuidValueObject::fromValue($category->id));
             }
 
             $memories[] = new Memory(
-                $doctrineMemory->id,
-                $doctrineMemory->name,
+                UuidValueObject::fromValue($doctrineMemory->id),
+                MemoryName::fromValue($doctrineMemory->name),
                 MemoryType::fromValue($doctrineMemory->type),
                 $doctrineMemory->createdAt,
                 $categories,
-                $doctrineMemory->content,
+                MemoryContent::fromValue($doctrineMemory->content),
                 $doctrineMemory->modifiedAt,
             );
         }

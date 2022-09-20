@@ -2,15 +2,26 @@
 
 namespace App\Memories\Domain;
 
+use App\Categories\Domain\CustomException;
 use App\Shared\Domain\StringValueObject;
 
 class MemoryName extends StringValueObject
 {
-    public function __construct(string $value)
+    /**
+     * @throws CustomException
+     */
+    private function __construct(string $value)
     {
         parent::__construct($value);
         if ($this->length() > 100) {
-            throw new \Exception('Máximo 100 caracteres');
+            throw new CustomException('Máximo 100 caracteres');
         }
+    }
+
+    /**
+     * @throws CustomException
+     */
+    public static function fromValue(string $value): self {
+        return new self($value);
     }
 }
