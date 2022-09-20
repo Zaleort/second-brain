@@ -21,7 +21,7 @@ class CategoryRepository implements CategoryRepositoryInterface
     public function save(Category $category): void
     {
         $repository = $this->entityManager->getRepository(DoctrineCategory::class);
-        $doctrineCategory = $repository->find($category->getId()) ?? new DoctrineCategory();
+        $doctrineCategory = $repository->find($category->getId()->value) ?? new DoctrineCategory();
 
         $doctrineCategory->id = $category->getId()->value;
         $doctrineCategory->name = $category->getName()->value;
