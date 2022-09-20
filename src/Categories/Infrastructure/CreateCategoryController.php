@@ -7,6 +7,7 @@ use App\Categories\Application\CreateCategory\CreateCategoryCommand;
 use App\Categories\Application\CreateCategory\CreateCategoryHandler;
 use App\Categories\Domain\CustomException;
 use App\Categories\Domain\ForbiddenNameException;
+use App\Shared\Domain\UuidGenerator;
 use Exception;
 use Ramsey\Uuid\Uuid;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -17,7 +18,7 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class CreateCategoryController extends AbstractController
 {
-    public function __construct(private readonly CreateCategoryHandler $handler)
+    public function __construct(private readonly CreateCategoryHandler $handler, private readonly UuidGenerator $uuidGenerator)
     {
 
     }
@@ -26,7 +27,7 @@ class CreateCategoryController extends AbstractController
     public  function  createCategory(Request $request): Response
     {
         $data = json_decode($request->getContent(), true, 512, JSON_THROW_ON_ERROR);
-        $command = new CreateCategoryCommand(Uuid::uuid4()->toString(), $data['name']);
+        $command = new CreateCategoryCommand($this->uuidGenerator->random(), $data['name']);
 
         try {
             $this->handler->execute($command);

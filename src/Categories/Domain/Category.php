@@ -2,35 +2,25 @@
 
 namespace App\Categories\Domain;
 
+use App\Shared\Domain\UuidValueObject;
+
 class Category
 {
-    public function __construct(private readonly string $id, private readonly string $name)
+    public function __construct(private readonly UuidValueObject $id, private readonly CategoryName $name)
     {
     }
 
-    /**
-     * @throws ForbiddenNameException
-     */
-    public static function create(string $id, string $name): self
+    public static function create(UuidValueObject $id, CategoryName $name): self
     {
-        if ($name === 'Brokalia') {
-            throw new ForbiddenNameException('El nombre no puede contener Brokalia');
-        }
         return new self($id, $name);
     }
 
-    /**
-     * @return string
-     */
-    public function getId(): string
+    public function getId(): UuidValueObject
     {
         return $this->id;
     }
 
-    /**
-     * @return string
-     */
-    public function getName(): string
+    public function getName(): CategoryName
     {
         return $this->name;
     }

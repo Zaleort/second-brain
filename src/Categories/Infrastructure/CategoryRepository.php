@@ -3,7 +3,11 @@
 namespace App\Categories\Infrastructure;
 
 use App\Categories\Domain\Category;
+use App\Categories\Domain\CategoryName;
 use App\Categories\Domain\CategoryRepositoryInterface;
+use App\Categories\Domain\CustomException;
+use App\Categories\Domain\ForbiddenNameException;
+use App\Shared\Domain\UuidValueObject;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
@@ -19,12 +23,16 @@ class CategoryRepository implements CategoryRepositoryInterface
         $repository = $this->entityManager->getRepository(DoctrineCategory::class);
         $doctrineCategory = $repository->find($category->getId()) ?? new DoctrineCategory();
 
-        $doctrineCategory->id = $category->getId();
-        $doctrineCategory->name = $category->getName();
+        $doctrineCategory->id = $category->getId()->value;
+        $doctrineCategory->name = $category->getName()->value;
         $this->entityManager->persist($doctrineCategory);
         $this->entityManager->flush();
     }
 
+    /**
+     * @throws CustomException
+     * @throws ForbiddenNameException
+     */
     public function findAll(): array
     {
         $repository = $this->entityManager->getRepository(DoctrineCategory::class);
@@ -32,7 +40,7 @@ class CategoryRepository implements CategoryRepositoryInterface
 
         $categories = [];
         foreach ($doctrineCategories as $doctrineCategory) {
-            $categories[] = new Category($doctrineCategory->id, $doctrineCategory->name);
+            $categories[] = new Category(UuidValueObject::fromValue($doctrineCategory->id), CategoryName::fromValue($doctrineCategory->name));
         }
 
         return $categories;
