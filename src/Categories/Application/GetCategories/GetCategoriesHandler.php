@@ -2,6 +2,7 @@
 
 namespace App\Categories\Application\GetCategories;
 
+use App\Categories\Application\CategoryDTO;
 use App\Categories\Domain\CategoryRepositoryInterface;
 
 class GetCategoriesHandler
@@ -12,6 +13,13 @@ class GetCategoriesHandler
 
     public function execute(): array
     {
-        return $this->categoryRepository->findAll();
+        $categories = $this->categoryRepository->findAll();
+        $categoriesDTO = [];
+
+        foreach ($categories as $category) {
+            $categoriesDTO[] = CategoryDTO::fromEntity($category);
+        }
+
+        return $categoriesDTO;
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Categories\Application\GetCategory;
 
+use App\Categories\Application\CategoryDTO;
 use App\Categories\Domain\Category;
 use App\Categories\Domain\CategoryRepositoryInterface;
 
@@ -13,8 +14,13 @@ class GetCategoryHandler
     {
     }
 
-    public function execute(GetCategoryCommand $command): Category | null
+    public function execute(GetCategoryCommand $command): ?CategoryDTO
     {
-        return $this->categoryRepository->findByName($command->name);
+        $category = $this->categoryRepository->findByName($command->name);
+        if (!$category) {
+            return null;
+        }
+
+        return CategoryDTO::fromEntity($category);
     }
 }

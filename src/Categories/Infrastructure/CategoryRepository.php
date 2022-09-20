@@ -46,6 +46,10 @@ class CategoryRepository implements CategoryRepositoryInterface
         return $categories;
     }
 
+    /**
+     * @throws CustomException
+     * @throws ForbiddenNameException
+     */
     public function findByName(string $name): ?Category
     {
         $repository = $this->entityManager->getRepository(DoctrineCategory::class);
@@ -54,6 +58,6 @@ class CategoryRepository implements CategoryRepositoryInterface
             return null;
         }
 
-        return new Category($doctrineCategory->id, $doctrineCategory->name);
+        return new Category(UuidValueObject::fromValue($doctrineCategory->id), CategoryName::fromValue($doctrineCategory->name));
     }
 }
