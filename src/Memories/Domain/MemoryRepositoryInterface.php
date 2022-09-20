@@ -4,7 +4,7 @@ namespace App\Memories\Domain;
 
 interface MemoryRepositoryInterface
 {
-    public function findById(int $id): Memory;
+    public function findById(string $id): ?Memory;
     public function findByCriteria(array $criterias): array;
 
     /**

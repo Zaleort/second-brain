@@ -18,22 +18,31 @@ use Doctrine\Persistence\ManagerRegistry;
 
 class MemoryRepository implements MemoryRepositoryInterface
 {
-    public function __construct(private EntityManagerInterface $entityManager, private UuidGenerator $uuidGenerator) {}
+    public function __construct(private EntityManagerInterface $entityManager) {}
 
     /**
      * @throws CustomException
      */
-    public function findById(int $id): Memory
+    public function findById(string $id): ?Memory
     {
-        // TODO: Implement findById() method.
+        $doctrineMemory = $this->entityManager->getRepository(DoctrineMemory::class)->find($id);
+        if (!$doctrineMemory) {
+            return null;
+        }
+
+        $categories = new MemoryCategories();
+        foreach ($doctrineMemory->categories as $category) {
+            $categories->add(UuidValueObject::fromValue($category->id));
+        }
+
         return new Memory(
-            UuidValueObject::fromValue($this->uuidGenerator->random()),
-            MemoryName::fromValue(''),
-            MemoryType::link(),
-            new \DateTimeImmutable(),
-            new MemoryCategories(),
-            null,
-            null
+            UuidValueObject::fromValue($doctrineMemory->id),
+            MemoryName::fromValue($doctrineMemory->name),
+            MemoryType::fromValue($doctrineMemory->type),
+            $doctrineMemory->createdAt,
+            $categories,
+            MemoryContent::fromValue($doctrineMemory->content),
+            $doctrineMemory->modifiedAt,
         );
     }
 
