@@ -2,9 +2,11 @@
 
 namespace App\Memories\Domain;
 
+use App\Shared\Domain\UuidValueObject;
+
 interface MemoryRepositoryInterface
 {
-    public function findById(string $id): ?Memory;
+    public function findById(UuidValueObject $id): ?Memory;
     public function findByCriteria(array $criterias): array;
 
     /**
@@ -12,5 +14,5 @@ interface MemoryRepositoryInterface
      */
     public function findAll(): array;
     public function save(Memory $memory);
-    public function delete(int $id);
+    public function delete(UuidValueObject $id);
 }

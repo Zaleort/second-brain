@@ -13,20 +13,30 @@ class Memory {
         private readonly MemoryType $type,
         private readonly DateTimeImmutable $createdAt,
         private readonly MemoryCategories $categories,
-        private readonly ?MemoryContent $content,
-        private readonly ?DateTimeImmutable $modifiedAt,
+        private ?MemoryContent $content,
+        private ?DateTimeImmutable $modifiedAt,
     ) {}
 
     public static function create(
         UuidValueObject $id,
         MemoryName $name,
         MemoryType $type,
+        DateTimeImmutable $createdAt,
         MemoryCategories $categories,
         ?MemoryContent $content,
     ): self
     {
-        $createdAt = new DateTimeImmutable();
         return new self($id, $name, $type, $createdAt, $categories, $content, null);
+    }
+
+    public function updateContent(MemoryContent $content): void
+    {
+        if ($content->value === 'Exception') {
+            throw new CustomException('Error');
+        }
+
+        $this->content = $content;
+        $this->modifiedAt = new DateTimeImmutable();
     }
 
     public function getId(): UuidValueObject

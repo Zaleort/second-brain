@@ -10,11 +10,12 @@ use App\Memories\Domain\MemoryName;
 use App\Memories\Domain\MemoryRepositoryInterface;
 use App\Memories\Domain\MemoryType;
 use App\Memories\Domain\SameTypeAndNameException;
+use App\Shared\Domain\Clock;
 use App\Shared\Domain\UuidValueObject;
 
 class CreateMemoryHandler
 {
-    public function __construct(private readonly MemoryRepositoryInterface $memoryRepository)
+    public function __construct(private readonly MemoryRepositoryInterface $memoryRepository, private readonly Clock $clock)
     {
     }
 
@@ -38,8 +39,9 @@ class CreateMemoryHandler
             UuidValueObject::fromvalue($command->id),
             MemoryName::fromValue($command->name),
             MemoryType::fromValue($command->type),
+            $this->clock->now(),
             $categories,
-            MemoryContent::fromValue($command->content),
+            $command->content ? MemoryContent::fromValue($command->content) : null,
         );
 
         $this->memoryRepository->save($memory);

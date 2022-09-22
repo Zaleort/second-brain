@@ -18,7 +18,7 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class CreateCategoryController extends AbstractController
 {
-    public function __construct(private readonly CreateCategoryHandler $handler, private readonly UuidGenerator $uuidGenerator)
+    public function __construct(private readonly CreateCategoryHandler $handler, private readonly UuidGenerator $symfonyGenerator)
     {
 
     }
@@ -27,7 +27,7 @@ class CreateCategoryController extends AbstractController
     public  function  createCategory(Request $request): Response
     {
         $data = json_decode($request->getContent(), true, 512, JSON_THROW_ON_ERROR);
-        $command = new CreateCategoryCommand($this->uuidGenerator->random(), $data['name']);
+        $command = new CreateCategoryCommand($this->symfonyGenerator->random(), $data['name']);
 
         try {
             $this->handler->execute($command);

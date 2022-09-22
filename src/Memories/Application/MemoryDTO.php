@@ -30,7 +30,7 @@ class MemoryDTO
             $categories,
             $memory->getCreatedAt(),
             $memory->getModifiedAt(),
-            $memory->getContent()->value,
+            $memory->getContent()?->value,
         );
     }
 }

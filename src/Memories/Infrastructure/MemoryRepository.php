@@ -23,9 +23,9 @@ class MemoryRepository implements MemoryRepositoryInterface
     /**
      * @throws CustomException
      */
-    public function findById(string $id): ?Memory
+    public function findById(UuidValueObject $id): ?Memory
     {
-        $doctrineMemory = $this->entityManager->getRepository(DoctrineMemory::class)->find($id);
+        $doctrineMemory = $this->entityManager->getRepository(DoctrineMemory::class)->find($id->value);
         if (!$doctrineMemory) {
             return null;
         }
@@ -66,7 +66,7 @@ class MemoryRepository implements MemoryRepositoryInterface
 
     public function save(Memory $memory): void
     {
-        $doctrineMemory = $this->entityManager->find(DoctrineMemory::class, $memory->getId()) ?? new DoctrineMemory();
+        $doctrineMemory = $this->entityManager->find(DoctrineMemory::class, $memory->getId()->value) ?? new DoctrineMemory();
         $doctrineMemory->id = $memory->getId()->value;
         $doctrineMemory->name = $memory->getName()->value;
         $doctrineMemory->type = $memory->getType()->value;
@@ -84,9 +84,18 @@ class MemoryRepository implements MemoryRepositoryInterface
         $this->entityManager->flush();
     }
 
-    public function delete(int $id): void
+    /**
+     * @throws CustomException
+     */
+    public function delete(UuidValueObject $id): void
     {
-        // TODO: Implement delete() method.
+        $memory = $this->entityManager->find(DoctrineMemory::class, $id->value);
+        if (!$memory) {
+            throw new CustomException('No existe la memoria', 404);
+        }
+
+        $this->entityManager->remove($memory);
+        $this->entityManager->flush();
     }
 
     /**
