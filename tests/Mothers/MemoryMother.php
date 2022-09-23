@@ -16,7 +16,7 @@ class MemoryMother
     {
         $uuid = new RamseyUuidGenerator();
 
-        return Memory::create(
+        $memory = Memory::create(
             UuidValueObject::fromValue($uuid->random()),
             MemoryName::fromValue('Name'),
             MemoryType::text(),
@@ -24,11 +24,14 @@ class MemoryMother
             new MemoryCategories(),
             null,
         );
+
+        $memory->clearEvents();
+        return $memory;
     }
 
     public static function withId(string $id): Memory
     {
-        return Memory::create(
+        $memory = Memory::create(
             UuidValueObject::fromValue($id),
             MemoryName::fromValue('Name'),
             MemoryType::text(),
@@ -36,5 +39,8 @@ class MemoryMother
             new MemoryCategories(),
             null,
         );
+
+        $memory->clearEvents();
+        return $memory;
     }
 }

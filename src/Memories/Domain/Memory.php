@@ -47,6 +47,8 @@ class Memory extends Entity
 
         $this->content = $content;
         $this->modifiedAt = new DateTimeImmutable();
+
+        $this->events[] = new ContentUpdated($this->id->value);
     }
 
     public function getId(): UuidValueObject

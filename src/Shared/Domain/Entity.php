@@ -10,4 +10,9 @@ class Entity
     {
         return $this->events;
     }
+
+    public function clearEvents(): void
+    {
+        $this->events = [];
+    }
 }

@@ -4,13 +4,16 @@ namespace App\Tests\unit\Memories\Application\UpdateMemoryContent;
 
 use App\Memories\Application\UpdateMemoryContent\UpdateMemoryContentCommand;
 use App\Memories\Application\UpdateMemoryContent\UpdateMemoryContentHandler;
+use App\Memories\Domain\ContentUpdated;
 use App\Memories\Domain\Memory;
 use App\Memories\Domain\MemoryCategories;
 use App\Memories\Domain\MemoryContent;
 use App\Memories\Domain\MemoryName;
 use App\Memories\Domain\MemoryRepositoryInterface;
 use App\Memories\Domain\MemoryType;
+use App\Shared\Domain\EventBusInterface;
 use App\Shared\Domain\UuidValueObject;
+use App\Tests\Mothers\MemoryMother;
 use PHPUnit\Framework\TestCase;
 
 class UpdateMemoryContentHandlerTest extends TestCase
@@ -35,7 +38,24 @@ class UpdateMemoryContentHandlerTest extends TestCase
             )
         );
 
-        $handler = new UpdateMemoryContentHandler($repository);
+        $eventBus = $this->createMock(EventBusInterface::class);
+
+        $handler = new UpdateMemoryContentHandler($repository, $eventBus);
+        $command = new UpdateMemoryContentCommand($this->memoryId, $this->memoryContent);
+        $handler->execute($command);
+
+        $this->assertTrue($spy->hasBeenInvoked());
+    }
+
+    public function test_dipatch_content_updated_event()
+    {
+        $repository = $this->createMock(MemoryRepositoryInterface::class);
+        $repository->method('findById')->willReturn($this->getMemory());
+
+        $eventBus = $this->createMock(EventBusInterface::class);
+        $eventBus->expects($spy = self::any())->method('dispatchAll')->with([new ContentUpdated($this->memoryId)]);
+
+        $handler = new UpdateMemoryContentHandler($repository, $eventBus);
         $command = new UpdateMemoryContentCommand($this->memoryId, $this->memoryContent);
         $handler->execute($command);
 
@@ -51,13 +71,6 @@ class UpdateMemoryContentHandlerTest extends TestCase
 
     private function getMemory(): Memory
     {
-        return Memory::create(
-            UuidValueObject::fromValue($this->memoryId),
-            MemoryName::fromValue('Name'),
-            MemoryType::fromValue(1),
-            new \DateTimeImmutable('2022-01-01'),
-            new MemoryCategories(),
-            null,
-        );
+        return MemoryMother::withId($this->memoryId);
     }
 }
