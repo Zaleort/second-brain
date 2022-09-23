@@ -6,7 +6,6 @@ use App\Memories\Application\CreateMemory\CreateMemoryCommand;
 use App\Memories\Application\CreateMemory\CreateMemoryHandler;
 use App\Memories\Domain\SameTypeAndNameException;
 use App\Shared\Domain\UuidGenerator;
-use Ramsey\Uuid\Uuid;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -15,9 +14,10 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class CreateMemoryController extends AbstractController
 {
-    public function __construct(private readonly CreateMemoryHandler $handler, private readonly UuidGenerator $uuidGenerator)
-    {
-    }
+    public function __construct(
+        private readonly CreateMemoryHandler $handler,
+        private readonly UuidGenerator $uuidGenerator,
+    ) {}
 
     #[Route('/memories', methods: ['POST'])]
     public function createMemory(Request $request): Response

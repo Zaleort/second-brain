@@ -3,10 +3,12 @@
 namespace App\Memories\Domain;
 
 use App\Categories\Domain\CustomException;
+use App\Shared\Domain\Entity;
 use App\Shared\Domain\UuidValueObject;
 use DateTimeImmutable;
 
-class Memory {
+class Memory extends Entity
+{
     function __construct(
         private readonly UuidValueObject $id,
         private readonly MemoryName $name,
@@ -26,7 +28,15 @@ class Memory {
         ?MemoryContent $content,
     ): self
     {
-        return new self($id, $name, $type, $createdAt, $categories, $content, null);
+        $memory = new self($id, $name, $type, $createdAt, $categories, $content, null);
+        $memory->dispatchCreated();
+
+        return $memory;
+    }
+
+    private function dispatchCreated(): void
+    {
+        $this->events[] = new MemoryCreated($this->id->value);
     }
 
     public function updateContent(MemoryContent $content): void

@@ -11,13 +11,16 @@ use App\Memories\Domain\MemoryRepositoryInterface;
 use App\Memories\Domain\MemoryType;
 use App\Memories\Domain\SameTypeAndNameException;
 use App\Shared\Domain\Clock;
+use App\Shared\Domain\EventBusInterface;
 use App\Shared\Domain\UuidValueObject;
 
 class CreateMemoryHandler
 {
-    public function __construct(private readonly MemoryRepositoryInterface $memoryRepository, private readonly Clock $clock)
-    {
-    }
+    public function __construct(
+        private readonly MemoryRepositoryInterface $memoryRepository,
+        private readonly Clock $clock,
+        private readonly EventBusInterface $eventBus,
+    ) {}
 
     /**
      * @throws SameTypeAndNameException
@@ -45,5 +48,6 @@ class CreateMemoryHandler
         );
 
         $this->memoryRepository->save($memory);
+        $this->eventBus->dispatchAll($memory->getEvents());
     }
 }

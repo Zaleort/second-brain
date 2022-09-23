@@ -13,6 +13,7 @@ interface MemoryRepositoryInterface
      * @return Memory[]
      */
     public function findAll(): array;
-    public function save(Memory $memory);
-    public function delete(UuidValueObject $id);
+    public function save(Memory $memory): void;
+    public function delete(UuidValueObject $id): void;
+    public function count(): int;
 }

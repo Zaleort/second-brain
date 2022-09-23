@@ -125,4 +125,9 @@ class MemoryRepository implements MemoryRepositoryInterface
 
         return $memories;
     }
+
+    public function count(): int
+    {
+        return $this->entityManager->getRepository(DoctrineMemory::class)->count([]);
+    }
 }
