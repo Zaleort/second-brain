@@ -7,14 +7,15 @@ use App\Categories\Domain\CategoryName;
 use App\Categories\Domain\CategoryRepositoryInterface;
 use App\Categories\Domain\CustomException;
 use App\Categories\Domain\ForbiddenNameException;
-use App\Categories\Domain\TestService;
-use App\Memories\Domain\MemoryName;
+use App\Shared\Domain\EventBusInterface;
 use App\Shared\Domain\UuidValueObject;
 
 class CreateCategoryHandler
 {
-    public function __construct(private readonly CategoryRepositoryInterface $categoryRepository)
-    {
+    public function __construct(
+        private readonly CategoryRepositoryInterface $categoryRepository,
+        private readonly EventBusInterface $eventBus,
+    ) {
     }
 
     /**
@@ -31,5 +32,7 @@ class CreateCategoryHandler
 
         $category = Category::create(UuidValueObject::fromValue($command->id), CategoryName::fromValue($command->name));
         $this->categoryRepository->save($category);
+
+        $this->eventBus->dispatchAll($category->getEvents());
     }
 }
