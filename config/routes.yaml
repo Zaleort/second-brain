@@ -1,6 +1,9 @@
 controllers_memories:
-    resource: ../src/Memories/Infrastructure
-    type: attribute
+  resource: ../src/Memories/Infrastructure
+  type: attribute
 controller_categories:
-    resource: ../src/Categories/Infrastructure
-    type: attribute
+  resource: ../src/Categories/Infrastructure
+  type: attribute
+controller_users:
+  resource: ../src/Users/Infrastructure
+  type: attribute

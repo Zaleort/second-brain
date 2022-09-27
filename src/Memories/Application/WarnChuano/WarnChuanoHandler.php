@@ -15,6 +15,9 @@ class WarnChuanoHandler
     ) {
     }
 
+    /**
+     * @throws CustomException
+     */
     public function execute(WarnChuanoCommand $command): void
     {
         $memory = $this->repository->findById(UuidValueObject::fromValue($command->id));
