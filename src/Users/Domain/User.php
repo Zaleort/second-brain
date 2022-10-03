@@ -17,6 +17,14 @@ class User extends Entity
     ) {
     }
 
+    public static function create(
+        UuidValueObject $id,
+        EmailAddress $email,
+        Password $password,
+    ): self {
+        return new self($id, $email, $password);
+    }
+
     public function getId(): UuidValueObject
     {
         return $this->id;

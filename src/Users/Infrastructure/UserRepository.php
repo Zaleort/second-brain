@@ -11,9 +11,14 @@ use App\Shared\Domain\UuidValueObject;
 use App\Users\Domain\Password;
 use App\Users\Domain\User;
 use App\Users\Domain\UserRepositoryInterface;
+use Doctrine\ORM\EntityManagerInterface;
 
 class UserRepository implements UserRepositoryInterface
 {
+
+    public function __construct(private EntityManagerInterface $entityManager)
+    {
+    }
 
     /**
      * @throws InvalidEmailException
@@ -21,10 +26,15 @@ class UserRepository implements UserRepositoryInterface
      */
     public function findByEmail(EmailAddress $email): ?User
     {
+        $doctrineUser = $this->entityManager->getRepository(DoctrineUser::class)->findOneBy(['email' => $email->value]);
+        if (!$doctrineUser) {
+            return null;
+        }
+
         return new User(
-            UuidValueObject::fromValue("13eade5a-d7a3-47fb-8a5e-a2d65f43122d"),
-            EmailAddress::fromValue('henrique@brokalia.com'),
-            new Password('pass'),
+            UuidValueObject::fromValue($doctrineUser->id),
+            EmailAddress::fromValue($doctrineUser->email),
+            new Password($doctrineUser->password),
         );
     }
 
@@ -34,10 +44,16 @@ class UserRepository implements UserRepositoryInterface
      */
     public function findById(UuidValueObject $id): ?User
     {
+        $repository = $this->entityManager->getRepository(DoctrineUser::class);
+        $doctrineUser = $repository->find($id->value);
+        if (!$doctrineUser) {
+            return null;
+        }
+
         return new User(
-            UuidValueObject::fromValue("13eade5a-d7a3-47fb-8a5e-a2d65f43122d"),
-            EmailAddress::fromValue('henrique@brokalia.com'),
-            new Password('pass'),
+            UuidValueObject::fromValue($doctrineUser->id),
+            EmailAddress::fromValue($doctrineUser->email),
+            new Password($doctrineUser->password),
         );
     }
 }
