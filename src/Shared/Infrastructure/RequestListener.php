@@ -23,8 +23,8 @@ class RequestListener
     #[AsEventListener]
     public function onKernelController(ControllerEvent $event): void
     {
-        $controller = $event->getController();
-        if ($controller[0] instanceof PublicController) {
+        $controller = is_array($event->getController()) ? $event->getController()[0] : $event->getController();
+        if ($controller instanceof PublicController) {
             return;
         }
 
