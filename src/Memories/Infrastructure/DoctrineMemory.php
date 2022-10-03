@@ -29,6 +29,9 @@ class DoctrineMemory
     #[ORM\Column]
     public ?int $type = null;
 
+    #[ORM\Column(length: 36)]
+    public ?string $userId;
+
     #[Groups('memory')]
     #[ORM\Column]
     public ?\DateTimeImmutable $createdAt = null;

@@ -20,7 +20,8 @@ class CreateMemoryHandler
         private readonly MemoryRepositoryInterface $memoryRepository,
         private readonly Clock $clock,
         private readonly EventBusInterface $eventBus,
-    ) {}
+    ) {
+    }
 
     /**
      * @throws SameTypeAndNameException
@@ -44,6 +45,7 @@ class CreateMemoryHandler
             MemoryType::fromValue($command->type),
             $this->clock->now(),
             $categories,
+            UuidValueObject::fromValue($command->loggedUserId),
             $command->content ? MemoryContent::fromValue($command->content) : null,
         );
 

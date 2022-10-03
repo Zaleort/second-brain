@@ -18,6 +18,7 @@ use PHPUnit\Framework\TestCase;
 class CreateMemoryHandlerTest extends TestCase
 {
     private string $memoryId;
+    private string $userId;
     private string $memoryName;
     private \DateTimeImmutable $memoryCreatedAt;
 
@@ -25,6 +26,7 @@ class CreateMemoryHandlerTest extends TestCase
     {
         parent::setUp();
         $this->memoryId = '0379688f-2983-4a16-b2de-ad3976d540da';
+        $this->userId = '0379688f-2983-4a16-b2de-ad3976d540da';
         $this->memoryName = 'Name';
         $this->memoryCreatedAt = new \DateTimeImmutable();
     }
@@ -41,7 +43,7 @@ class CreateMemoryHandlerTest extends TestCase
 
         $handler = new CreateMemoryHandler($repository, $clock, $eventBus);
 
-        $command = new CreateMemoryCommand($this->memoryId, $this->memoryName, 1, [], null);
+        $command = new CreateMemoryCommand($this->memoryId, $this->memoryName, 1, [], $this->userId, null);
         $handler->execute($command);
 
         $this->assertTrue($spy->hasBeenInvoked());
@@ -58,7 +60,7 @@ class CreateMemoryHandlerTest extends TestCase
 
         $handler = new CreateMemoryHandler($repository, $clock, $eventBus);
 
-        $command = new CreateMemoryCommand($this->memoryId, $this->memoryName, 1, [], null);
+        $command = new CreateMemoryCommand($this->memoryId, $this->memoryName, 1, [], $this->userId, null);
         $handler->execute($command);
 
         $this->assertTrue($eventSpy->hasBeenInvoked());
@@ -72,6 +74,7 @@ class CreateMemoryHandlerTest extends TestCase
             MemoryType::fromValue(1),
             $this->memoryCreatedAt,
             new MemoryCategories(),
+            UuidValueObject::fromValue($this->userId),
             null,
         );
     }

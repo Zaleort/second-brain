@@ -9,15 +9,17 @@ use DateTimeImmutable;
 
 class Memory extends Entity
 {
-    function __construct(
+    public function __construct(
         private readonly UuidValueObject $id,
         private readonly MemoryName $name,
         private readonly MemoryType $type,
         private readonly DateTimeImmutable $createdAt,
         private readonly MemoryCategories $categories,
+        private readonly UuidValueObject $userId,
         private ?MemoryContent $content,
         private ?DateTimeImmutable $modifiedAt,
-    ) {}
+    ) {
+    }
 
     public static function create(
         UuidValueObject $id,
@@ -25,10 +27,10 @@ class Memory extends Entity
         MemoryType $type,
         DateTimeImmutable $createdAt,
         MemoryCategories $categories,
+        UuidValueObject $userId,
         ?MemoryContent $content,
-    ): self
-    {
-        $memory = new self($id, $name, $type, $createdAt, $categories, $content, null);
+    ): self {
+        $memory = new self($id, $name, $type, $createdAt, $categories, $userId, $content, null);
         $memory->dispatchCreated();
 
         return $memory;
@@ -74,6 +76,11 @@ class Memory extends Entity
     public function getCategories(): MemoryCategories
     {
         return $this->categories;
+    }
+
+    public function getUserId(): UuidValueObject
+    {
+        return $this->userId;
     }
 
     public function getContent(): ?MemoryContent

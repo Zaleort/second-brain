@@ -9,6 +9,8 @@ class CreateMemoryCommand
         public readonly string $name,
         public readonly int $type,
         public readonly array $categories,
+        public readonly string $loggedUserId,
         public readonly ?string $content = null,
-    ) {}
+    ) {
+    }
 }

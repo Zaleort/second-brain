@@ -6,6 +6,7 @@ use App\Memories\Application\CreateMemory\CreateMemoryCommand;
 use App\Memories\Application\CreateMemory\CreateMemoryHandler;
 use App\Memories\Domain\SameTypeAndNameException;
 use App\Shared\Domain\UuidGenerator;
+use App\Users\Domain\User;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -17,12 +18,16 @@ class CreateMemoryController extends AbstractController
     public function __construct(
         private readonly CreateMemoryHandler $handler,
         private readonly UuidGenerator $uuidGenerator,
-    ) {}
+    ) {
+    }
 
     #[Route('/memories', methods: ['POST'])]
     public function createMemory(Request $request): Response
     {
         $data = json_decode($request->getContent(), true);
+
+        /** @var User $user */
+        $user = $request->server->get('user');
 
         $id = $this->uuidGenerator->random();
         $command = new CreateMemoryCommand(
@@ -30,6 +35,7 @@ class CreateMemoryController extends AbstractController
             $data['name'],
             $data['type'],
             $data['categories'],
+            $user->getId()->value,
             $data['content'],
         );
 
@@ -39,6 +45,5 @@ class CreateMemoryController extends AbstractController
         } catch (SameTypeAndNameException $error) {
             return new JsonResponse(['error' => $error->getMessage()], Response::HTTP_CONFLICT);
         }
-
     }
 }

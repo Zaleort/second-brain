@@ -25,6 +25,7 @@ class MemoryTest extends TestCase
             MemoryType::link(),
             new \DateTimeImmutable(),
             new MemoryCategories(),
+            UuidValueObject::fromValue('0379688f-2983-4a16-b2de-ad3976d540da'),
             null,
         );
 
@@ -43,6 +44,7 @@ class MemoryTest extends TestCase
             MemoryType::link(),
             new \DateTimeImmutable(),
             new MemoryCategories(),
+            UuidValueObject::fromValue('0379688f-2983-4a16-b2de-ad3976d540da'),
             null,
         );
 
