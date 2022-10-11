@@ -30,7 +30,7 @@ class DoctrineMemory
     public ?int $type = null;
 
     #[ORM\Column(length: 36)]
-    public ?string $userId;
+    public string $userId;
 
     #[Groups('memory')]
     #[ORM\Column]
