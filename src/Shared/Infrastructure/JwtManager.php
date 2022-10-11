@@ -7,6 +7,7 @@ namespace App\Shared\Infrastructure;
 use App\Shared\Domain\JwtManagerInterface;
 use App\Shared\Domain\JwtPayload;
 use Firebase\JWT\JWT;
+use Firebase\JWT\Key;
 
 class JwtManager implements JwtManagerInterface
 {
@@ -17,6 +18,9 @@ class JwtManager implements JwtManagerInterface
 
     public function decode(string $token): JwtPayload
     {
-        return new JwtPayload($token);
+        $key = new Key('Buenas tardes', 'HS256');
+        $decoded = JWT::decode($token, $key);
+
+        return new JwtPayload($decoded->id);
     }
 }

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Shared\Infrastructure;
 
 use App\Categories\Domain\CustomException;
+use App\Shared\Domain\JwtManagerInterface;
 use App\Shared\Domain\UuidValueObject;
 use App\Users\Domain\UserRepositoryInterface;
 use Psr\Log\LoggerInterface;
@@ -18,7 +19,8 @@ class RequestListener
 {
     public function __construct(
         private readonly UserRepositoryInterface $userRepository,
-        private readonly LoggerInterface $logger
+        private readonly LoggerInterface $logger,
+        private readonly JwtManagerInterface $jwtManager,
     ) {
     }
 
@@ -38,7 +40,8 @@ class RequestListener
             throw new CustomException('Token required', 401);
         }
 
-        $user = $this->userRepository->findById(UuidValueObject::fromValue($token));
+        $payload = $this->jwtManager->decode($token);
+        $user = $this->userRepository->findById(UuidValueObject::fromValue($payload->id));
 
         if (!$user) {
             throw new CustomException('Unauthorized', 401);
