@@ -9,7 +9,7 @@ use DateTimeImmutable;
 
 class Memory extends Entity
 {
-    public function __construct(
+    private function __construct(
         private readonly UuidValueObject $id,
         private readonly MemoryName $name,
         private readonly MemoryType $type,
@@ -34,6 +34,30 @@ class Memory extends Entity
         $memory->dispatchCreated();
 
         return $memory;
+    }
+
+    /**
+     * @throws CustomException
+     */
+    public static function fromPrimitives(
+        string $id,
+        string $name,
+        int $type,
+        DateTimeImmutable $createdAt,
+        array $categories,
+        string $userId,
+        ?string $content
+    ): self {
+        return new self(
+            UuidValueObject::fromValue($id),
+            MemoryName::fromValue($name),
+            MemoryType::fromValue($type),
+            $createdAt,
+            MemoryCategories::fromArray($categories),
+            UuidValueObject::fromValue($userId),
+            $content ? MemoryContent::fromValue($content) : null,
+            null,
+        );
     }
 
     private function dispatchCreated(): void

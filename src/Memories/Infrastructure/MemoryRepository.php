@@ -5,11 +5,7 @@ namespace App\Memories\Infrastructure;
 use App\Categories\Domain\CustomException;
 use App\Categories\Infrastructure\DoctrineCategory;
 use App\Memories\Domain\Memory;
-use App\Memories\Domain\MemoryCategories;
-use App\Memories\Domain\MemoryContent;
-use App\Memories\Domain\MemoryName;
 use App\Memories\Domain\MemoryRepositoryInterface;
-use App\Memories\Domain\MemoryType;
 use App\Shared\Domain\UuidValueObject;
 use Doctrine\ORM\EntityManagerInterface;
 
@@ -29,19 +25,19 @@ class MemoryRepository implements MemoryRepositoryInterface
             return null;
         }
 
-        $categories = new MemoryCategories();
+        $categories = [];
         foreach ($doctrineMemory->categories as $category) {
-            $categories->add(UuidValueObject::fromValue($category->id));
+            $categories[] = $category->id;
         }
 
-        return new Memory(
-            UuidValueObject::fromValue($doctrineMemory->id),
-            MemoryName::fromValue($doctrineMemory->name),
-            MemoryType::fromValue($doctrineMemory->type),
+        return Memory::fromPrimitives(
+            $doctrineMemory->id,
+            $doctrineMemory->name,
+            $doctrineMemory->type,
             $doctrineMemory->createdAt,
             $categories,
-            UuidValueObject::fromValue($doctrineMemory->userId),
-            MemoryContent::fromValue($doctrineMemory->content),
+            $doctrineMemory->userId,
+            $doctrineMemory->content,
             $doctrineMemory->modifiedAt,
         );
     }
@@ -111,19 +107,19 @@ class MemoryRepository implements MemoryRepositoryInterface
     {
         $memories = [];
         foreach ($doctrineMemories as $doctrineMemory) {
-            $categories = new MemoryCategories();
+            $categories = [];
             foreach ($doctrineMemory->categories as $category) {
-                $categories->add(UuidValueObject::fromValue($category->id));
+                $categories[] = $category->id;
             }
 
-            $memories[] = new Memory(
-                UuidValueObject::fromValue($doctrineMemory->id),
-                MemoryName::fromValue($doctrineMemory->name),
-                MemoryType::fromValue($doctrineMemory->type),
+            $memories[] = Memory::fromPrimitives(
+                $doctrineMemory->id,
+                $doctrineMemory->name,
+                $doctrineMemory->type,
                 $doctrineMemory->createdAt,
                 $categories,
-                UuidValueObject::fromValue($doctrineMemory->userId),
-                MemoryContent::fromValue($doctrineMemory->content),
+                $doctrineMemory->userId,
+                $doctrineMemory->content,
                 $doctrineMemory->modifiedAt,
             );
         }
