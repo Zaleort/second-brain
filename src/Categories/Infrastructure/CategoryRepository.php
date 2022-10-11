@@ -3,14 +3,10 @@
 namespace App\Categories\Infrastructure;
 
 use App\Categories\Domain\Category;
-use App\Categories\Domain\CategoryName;
 use App\Categories\Domain\CategoryRepositoryInterface;
 use App\Categories\Domain\CustomException;
 use App\Categories\Domain\ForbiddenNameException;
-use App\Shared\Domain\UuidValueObject;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\Persistence\ManagerRegistry;
 
 class CategoryRepository implements CategoryRepositoryInterface
 {
@@ -25,6 +21,7 @@ class CategoryRepository implements CategoryRepositoryInterface
 
         $doctrineCategory->id = $category->getId()->value;
         $doctrineCategory->name = $category->getName()->value;
+        $doctrineCategory->userId = $category->getUserId()->value;
         $this->entityManager->persist($doctrineCategory);
         $this->entityManager->flush();
     }
@@ -40,7 +37,11 @@ class CategoryRepository implements CategoryRepositoryInterface
 
         $categories = [];
         foreach ($doctrineCategories as $doctrineCategory) {
-            $categories[] = new Category(UuidValueObject::fromValue($doctrineCategory->id), CategoryName::fromValue($doctrineCategory->name));
+            $categories[] = Category::fromPrimitives(
+                $doctrineCategory->id,
+                $doctrineCategory->name,
+                $doctrineCategory->userId,
+            );
         }
 
         return $categories;
@@ -58,6 +59,10 @@ class CategoryRepository implements CategoryRepositoryInterface
             return null;
         }
 
-        return new Category(UuidValueObject::fromValue($doctrineCategory->id), CategoryName::fromValue($doctrineCategory->name));
+        return Category::fromPrimitives(
+            $doctrineCategory->id,
+            $doctrineCategory->name,
+            $doctrineCategory->userId,
+        );
     }
 }

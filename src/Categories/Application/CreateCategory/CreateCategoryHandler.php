@@ -30,7 +30,11 @@ class CreateCategoryHandler
             throw new CategoryAlreadyExistsException('La categoría ya existe');
         }
 
-        $category = Category::create(UuidValueObject::fromValue($command->id), CategoryName::fromValue($command->name));
+        $category = Category::create(
+            UuidValueObject::fromValue($command->id),
+            CategoryName::fromValue($command->name),
+            UuidValueObject::fromValue($command->loggedUserId),
+        );
         $this->categoryRepository->save($category);
 
         $this->eventBus->dispatchAll($category->getEvents());

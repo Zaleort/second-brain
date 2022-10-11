@@ -14,6 +14,9 @@ class DoctrineCategory
     #[ORM\Column]
     public string $id;
 
+    #[ORM\Column(length: 36)]
+    public string $userId;
+
     #[Groups('category')]
     #[ORM\Column(length: 255, unique: true)]
     public ?string $name = null;
