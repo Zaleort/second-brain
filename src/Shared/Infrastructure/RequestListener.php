@@ -7,14 +7,19 @@ namespace App\Shared\Infrastructure;
 use App\Categories\Domain\CustomException;
 use App\Shared\Domain\UuidValueObject;
 use App\Users\Domain\UserRepositoryInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
+use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 
 class RequestListener
 {
-    public function __construct(private readonly UserRepositoryInterface $userRepository)
-    {
+    public function __construct(
+        private readonly UserRepositoryInterface $userRepository,
+        private readonly LoggerInterface $logger
+    ) {
     }
 
     /**
@@ -48,5 +53,18 @@ class RequestListener
         if (!$event->isMainRequest()) {
             return;
         }
+    }
+
+    #[AsEventListener]
+    public function onKernelException(ExceptionEvent $event): void
+    {
+        $exception = $event->getThrowable();
+        $response = new JsonResponse([
+            'message' => $exception->getMessage()
+        ], $exception instanceof CustomException ? $exception->getHttpCode() : 500);
+
+        $event->setResponse($response);
+
+        $this->logger->error($exception->getFile() . ' ' . $exception->getLine());
     }
 }
