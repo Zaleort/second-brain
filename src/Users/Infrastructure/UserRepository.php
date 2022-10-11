@@ -8,7 +8,6 @@ use App\Categories\Domain\CustomException;
 use App\Shared\Domain\EmailAddress;
 use App\Shared\Domain\InvalidEmailException;
 use App\Shared\Domain\UuidValueObject;
-use App\Users\Domain\Password;
 use App\Users\Domain\User;
 use App\Users\Domain\UserRepositoryInterface;
 use Doctrine\ORM\EntityManagerInterface;
@@ -31,10 +30,10 @@ class UserRepository implements UserRepositoryInterface
             return null;
         }
 
-        return new User(
-            UuidValueObject::fromValue($doctrineUser->id),
-            EmailAddress::fromValue($doctrineUser->email),
-            new Password($doctrineUser->password),
+        return User::fromPrimitives(
+            $doctrineUser->id,
+            $doctrineUser->email,
+            $doctrineUser->password,
         );
     }
 
@@ -50,10 +49,10 @@ class UserRepository implements UserRepositoryInterface
             return null;
         }
 
-        return new User(
-            UuidValueObject::fromValue($doctrineUser->id),
-            EmailAddress::fromValue($doctrineUser->email),
-            new Password($doctrineUser->password),
+        return User::fromPrimitives(
+            $doctrineUser->id,
+            $doctrineUser->email,
+            $doctrineUser->password,
         );
     }
 }
