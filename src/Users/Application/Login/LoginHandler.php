@@ -6,12 +6,16 @@ namespace App\Users\Application\Login;
 
 use App\Categories\Domain\CustomException;
 use App\Shared\Domain\EmailAddress;
+use App\Shared\Domain\JwtManagerInterface;
+use App\Shared\Domain\JwtPayload;
 use App\Users\Domain\UserRepositoryInterface;
 
 class LoginHandler
 {
-    public function __construct(private readonly UserRepositoryInterface $userRepository)
-    {
+    public function __construct(
+        private readonly UserRepositoryInterface $userRepository,
+        private readonly JwtManagerInterface $jwtManager,
+    ) {
     }
 
     /**
@@ -24,6 +28,7 @@ class LoginHandler
             throw new CustomException('Usuario o contraseña incorrecto', 401);
         }
 
-        return new LoginResult($user->getId()->value);
+        $token = $this->jwtManager->encode(new JwtPayload($user->getId()->value));
+        return new LoginResult($token);
     }
 }

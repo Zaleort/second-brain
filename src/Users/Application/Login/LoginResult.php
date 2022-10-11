@@ -6,7 +6,7 @@ namespace App\Users\Application\Login;
 
 class LoginResult
 {
-    public function __construct(public readonly string $id)
+    public function __construct(public readonly string $token)
     {
     }
 }
