@@ -55,4 +55,40 @@ class UserRepository implements UserRepositoryInterface
             $doctrineUser->password,
         );
     }
+
+    /**
+     * @throws CustomException
+     * @throws InvalidEmailException
+     */
+    public function findAll(): array
+    {
+        $repository = $this->entityManager->getRepository(DoctrineUser::class);
+        $doctrineUsers = $repository->findAll();
+
+        $users = [];
+        foreach ($doctrineUsers as $doctrineUser) {
+            $users[] = User::fromPrimitives(
+                $doctrineUser->id,
+                $doctrineUser->email,
+                $doctrineUser->password,
+            );
+        }
+
+        return $users;
+    }
+
+    public function save(User $user): void
+    {
+        $doctrineUser = $this->entityManager->find(
+            DoctrineUser::class,
+            $user->getId()->value
+        ) ?? new DoctrineUser();
+
+        $doctrineUser->id = $user->getId()->value;
+        $doctrineUser->email = $user->getEmail()->value;
+        $doctrineUser->password = $user->getPassword()->value;
+
+        $this->entityManager->persist($doctrineUser);
+        $this->entityManager->flush();
+    }
 }
