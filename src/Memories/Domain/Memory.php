@@ -3,6 +3,8 @@
 namespace App\Memories\Domain;
 
 use App\Categories\Domain\CustomException;
+use App\Categories\Domain\ForbiddenNameException;
+use App\Memories\Domain\ForbiddenWords\ForbiddenWordChecker;
 use App\Shared\Domain\Entity;
 use App\Shared\Domain\UuidValueObject;
 use DateTimeImmutable;
@@ -21,6 +23,9 @@ class Memory extends Entity
     ) {
     }
 
+    /**
+     * @throws ForbiddenNameException
+     */
     public static function create(
         UuidValueObject $id,
         MemoryName $name,
@@ -28,8 +33,11 @@ class Memory extends Entity
         DateTimeImmutable $createdAt,
         MemoryCategories $categories,
         UuidValueObject $userId,
-        ?MemoryContent $content,
+        MemoryContent|null $content,
+        ForbiddenWordChecker $forbiddenWordChecker,
     ): self {
+        $forbiddenWordChecker->assert($content?->value);
+
         $memory = new self($id, $name, $type, $createdAt, $categories, $userId, $content, null);
         $memory->dispatchCreated();
 
@@ -65,11 +73,12 @@ class Memory extends Entity
         $this->events[] = new MemoryCreated($this->id->value);
     }
 
-    public function updateContent(MemoryContent $content): void
+    /**
+     * @throws CustomException
+     */
+    public function updateContent(MemoryContent $content, ForbiddenWordChecker $checker): void
     {
-        if ($content->value === 'Exception') {
-            throw new CustomException('Error');
-        }
+        $checker->assert($content->value);
 
         $this->content = $content;
         $this->modifiedAt = new DateTimeImmutable();

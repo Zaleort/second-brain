@@ -2,47 +2,44 @@
 
 namespace App\Tests\Mothers;
 
+use App\Categories\Domain\CustomException;
 use App\Memories\Domain\Memory;
-use App\Memories\Domain\MemoryCategories;
-use App\Memories\Domain\MemoryName;
 use App\Memories\Domain\MemoryType;
-use App\Shared\Domain\UuidValueObject;
 use App\Shared\Infrastructure\RamseyUuidGenerator;
 
 class MemoryMother
 {
+    /**
+     * @throws CustomException
+     */
     public static function random(): Memory
     {
         $uuid = new RamseyUuidGenerator();
-
-        $memory = Memory::create(
-            UuidValueObject::fromValue($uuid->random()),
-            MemoryName::fromValue('Name'),
-            MemoryType::text(),
+        return Memory::fromPrimitives(
+            $uuid->random(),
+            'Name',
+            MemoryType::text()->value,
             new \DateTimeImmutable(),
-            new MemoryCategories(),
-            UuidValueObject::fromValue($uuid->random()),
+            [],
+            $uuid->random(),
             null,
         );
-
-        $memory->clearEvents();
-        return $memory;
     }
 
+    /**
+     * @throws CustomException
+     */
     public static function withId(string $id): Memory
     {
         $uuid = new RamseyUuidGenerator();
-        $memory = Memory::create(
-            UuidValueObject::fromValue($id),
-            MemoryName::fromValue('Name'),
-            MemoryType::text(),
+        return Memory::fromPrimitives(
+            $id,
+            'Name',
+            MemoryType::text()->value,
             new \DateTimeImmutable(),
-            new MemoryCategories(),
-            UuidValueObject::fromValue($uuid->random()),
+            [],
+            $uuid->random(),
             null,
         );
-
-        $memory->clearEvents();
-        return $memory;
     }
 }

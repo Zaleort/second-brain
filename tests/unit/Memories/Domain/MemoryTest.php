@@ -3,12 +3,8 @@
 namespace App\Tests\unit\Memories\Domain;
 
 use App\Categories\Domain\CustomException;
-use App\Memories\Domain\Memory;
-use App\Memories\Domain\MemoryCategories;
 use App\Memories\Domain\MemoryContent;
-use App\Memories\Domain\MemoryName;
-use App\Memories\Domain\MemoryType;
-use App\Shared\Domain\UuidValueObject;
+use App\Tests\Mothers\MemoryMother;
 use PHPUnit\Framework\TestCase;
 
 class MemoryTest extends TestCase
@@ -19,16 +15,7 @@ class MemoryTest extends TestCase
      */
     public function test_updateContent_updates_content(): void
     {
-        $memory = Memory::create(
-            UuidValueObject::fromValue('0379688f-2983-4a16-b2de-ad3976d540da'),
-            MemoryName::fromValue(''),
-            MemoryType::link(),
-            new \DateTimeImmutable(),
-            new MemoryCategories(),
-            UuidValueObject::fromValue('0379688f-2983-4a16-b2de-ad3976d540da'),
-            null,
-        );
-
+        $memory = MemoryMother::random();
         $date = $memory->getModifiedAt();
         $memory->updateContent(MemoryContent::fromValue('Content'));
 
@@ -36,18 +23,12 @@ class MemoryTest extends TestCase
         $this->assertNotEquals($date, $memory->getModifiedAt());
     }
 
+    /**
+     * @throws CustomException
+     */
     public function test_updateContent_throws_exception_given_invalid_content(): void
     {
-        $memory = Memory::create(
-            UuidValueObject::fromValue('0379688f-2983-4a16-b2de-ad3976d540da'),
-            MemoryName::fromValue(''),
-            MemoryType::link(),
-            new \DateTimeImmutable(),
-            new MemoryCategories(),
-            UuidValueObject::fromValue('0379688f-2983-4a16-b2de-ad3976d540da'),
-            null,
-        );
-
+        $memory = MemoryMother::random();
         $this->expectException(CustomException::class);
         $memory->updateContent(MemoryContent::fromValue('Exception'));
     }
