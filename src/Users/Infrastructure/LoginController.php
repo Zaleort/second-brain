@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Users\Infrastructure;
 
-use App\Categories\Domain\CustomException;
+use App\Shared\Domain\Exceptions\CustomException;
 use App\Shared\Infrastructure\PublicController;
 use App\Users\Application\Login\LoginCommand;
 use App\Users\Application\Login\LoginHandler;
@@ -19,16 +19,17 @@ use Symfony\Component\Serializer\SerializerInterface;
 class LoginController extends AbstractController implements PublicController
 {
     public function __construct(
-        private readonly LoginHandler $handler,
+        private readonly LoginHandler        $handler,
         private readonly SerializerInterface $serializer
-    ) {
+    )
+    {
     }
 
     /**
      * @throws JsonException
      */
     #[Route('/login', methods: ['POST'])]
-    public function login(Request $request): Response
+    public function __invoke(Request $request): Response
     {
         $data = json_decode($request->getContent(), true, 512, JSON_THROW_ON_ERROR);
         $command = new LoginCommand(

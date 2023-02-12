@@ -2,7 +2,6 @@
 
 namespace App\Memories\Application\CreateMemory;
 
-use App\Categories\Domain\CustomException;
 use App\Memories\Domain\ForbiddenWords\ForbiddenWordChecker;
 use App\Memories\Domain\Memory;
 use App\Memories\Domain\MemoryCategories;
@@ -14,17 +13,19 @@ use App\Memories\Domain\SameTypeAndNameChecker;
 use App\Memories\Domain\SameTypeAndNameException;
 use App\Shared\Domain\Clock;
 use App\Shared\Domain\EventBusInterface;
-use App\Shared\Domain\UuidValueObject;
+use App\Shared\Domain\Exceptions\CustomException;
+use App\Shared\Domain\Uuid;
 
 class CreateMemoryHandler
 {
     public function __construct(
         private readonly MemoryRepositoryInterface $memoryRepository,
-        private readonly Clock $clock,
-        private readonly EventBusInterface $eventBus,
-        private readonly SameTypeAndNameChecker $sameTypeAndNameChecker,
-        private readonly ForbiddenWordChecker $forbiddenWordChecker,
-    ) {
+        private readonly Clock                     $clock,
+        private readonly EventBusInterface         $eventBus,
+        private readonly SameTypeAndNameChecker    $sameTypeAndNameChecker,
+        private readonly ForbiddenWordChecker      $forbiddenWordChecker,
+    )
+    {
     }
 
     /**
@@ -37,16 +38,16 @@ class CreateMemoryHandler
 
         $categories = new MemoryCategories();
         foreach ($command->categories as $category) {
-            $categories->add(UuidValueObject::fromValue($category));
+            $categories->add(Uuid::fromValue($category));
         }
 
         $memory = Memory::create(
-            UuidValueObject::fromvalue($command->id),
+            Uuid::fromvalue($command->id),
             MemoryName::fromValue($command->name),
             MemoryType::fromValue($command->type),
             $this->clock->now(),
             $categories,
-            UuidValueObject::fromValue($command->loggedUserId),
+            Uuid::fromValue($command->loggedUserId),
             $command->content ? MemoryContent::fromValue($command->content) : null,
             $this->forbiddenWordChecker,
         );

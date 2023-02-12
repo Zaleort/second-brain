@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Memories\Domain\ForbiddenWords;
 
-use App\Categories\Domain\CustomException;
+use App\Shared\Domain\Exceptions\CustomException;
 
 class ForbiddenWordException extends CustomException
 {

@@ -4,8 +4,13 @@ namespace App\Shared\Domain;
 
 class StringValueObject
 {
-    public function __construct(public readonly string $value)
+    protected function __construct(public readonly string $value)
     {
+    }
+
+    public static function fromValue(string $value): static
+    {
+        return new static($value);
     }
 
     public function length(): int

@@ -2,9 +2,9 @@
 
 namespace App\Memories\Application\DeleteMemory;
 
-use App\Categories\Domain\CustomException;
 use App\Memories\Domain\MemoryRepositoryInterface;
-use App\Shared\Domain\UuidValueObject;
+use App\Shared\Domain\Exceptions\CustomException;
+use App\Shared\Domain\Uuid;
 
 class DeleteMemoryHandler
 {
@@ -17,6 +17,6 @@ class DeleteMemoryHandler
      */
     public function execute(DeleteMemoryCommand $command): void
     {
-        $this->memoryRepository->delete(UuidValueObject::fromValue($command->id));
+        $this->memoryRepository->delete(Uuid::fromValue($command->id));
     }
 }

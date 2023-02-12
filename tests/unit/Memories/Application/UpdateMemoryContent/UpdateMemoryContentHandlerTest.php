@@ -12,7 +12,7 @@ use App\Memories\Domain\MemoryName;
 use App\Memories\Domain\MemoryRepositoryInterface;
 use App\Memories\Domain\MemoryType;
 use App\Shared\Domain\EventBusInterface;
-use App\Shared\Domain\UuidValueObject;
+use App\Shared\Domain\Uuid;
 use App\Tests\Mothers\MemoryMother;
 use PHPUnit\Framework\TestCase;
 

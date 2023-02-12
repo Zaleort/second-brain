@@ -2,7 +2,7 @@
 
 namespace App\Categories\Application\CreateCategory;
 
-use App\Categories\Domain\CustomException;
+use App\Shared\Domain\Exceptions\CustomException;
 
 class CategoryAlreadyExistsException extends CustomException
 {

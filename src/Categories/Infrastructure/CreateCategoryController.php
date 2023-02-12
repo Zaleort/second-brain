@@ -4,7 +4,7 @@ namespace App\Categories\Infrastructure;
 
 use App\Categories\Application\CreateCategory\CreateCategoryCommand;
 use App\Categories\Application\CreateCategory\CreateCategoryHandler;
-use App\Categories\Domain\CustomException;
+use App\Shared\Domain\Exceptions\CustomException;
 use App\Shared\Domain\UuidGenerator;
 use App\Users\Domain\User;
 use Exception;
@@ -18,8 +18,9 @@ class CreateCategoryController extends AbstractController
 {
     public function __construct(
         private readonly CreateCategoryHandler $handler,
-        private readonly UuidGenerator $symfonyGenerator
-    ) {
+        private readonly UuidGenerator         $symfonyGenerator
+    )
+    {
     }
 
     #[Route('/categories', methods: ['POST'])]

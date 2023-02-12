@@ -2,20 +2,21 @@
 
 namespace App\Memories\Application\UpdateMemoryContent;
 
-use App\Categories\Domain\CustomException;
 use App\Memories\Domain\ForbiddenWords\ForbiddenWordChecker;
 use App\Memories\Domain\MemoryContent;
 use App\Memories\Domain\MemoryRepositoryInterface;
 use App\Shared\Domain\EventBusInterface;
-use App\Shared\Domain\UuidValueObject;
+use App\Shared\Domain\Exceptions\CustomException;
+use App\Shared\Domain\Uuid;
 
 class UpdateMemoryContentHandler
 {
     public function __construct(
         private readonly MemoryRepositoryInterface $memoryRepository,
-        private readonly EventBusInterface $eventBus,
-        private readonly ForbiddenWordChecker $forbiddenWordChecker,
-    ) {
+        private readonly EventBusInterface         $eventBus,
+        private readonly ForbiddenWordChecker      $forbiddenWordChecker,
+    )
+    {
     }
 
     /**
@@ -23,7 +24,7 @@ class UpdateMemoryContentHandler
      */
     public function execute(UpdateMemoryContentCommand $command): void
     {
-        $memory = $this->memoryRepository->findById(UuidValueObject::fromValue($command->id));
+        $memory = $this->memoryRepository->findById(Uuid::fromValue($command->id));
         if (!$memory) {
             throw new CustomException('No se ha encontrado la memoria', 404);
         }

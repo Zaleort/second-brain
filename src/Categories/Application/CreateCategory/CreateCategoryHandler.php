@@ -3,19 +3,21 @@
 namespace App\Categories\Application\CreateCategory;
 
 use App\Categories\Domain\Category;
+use App\Categories\Domain\CategoryId;
 use App\Categories\Domain\CategoryName;
 use App\Categories\Domain\CategoryRepositoryInterface;
-use App\Categories\Domain\CustomException;
 use App\Categories\Domain\ForbiddenNameException;
 use App\Shared\Domain\EventBusInterface;
-use App\Shared\Domain\UuidValueObject;
+use App\Shared\Domain\Exceptions\CustomException;
+use App\Users\Domain\UserId;
 
 class CreateCategoryHandler
 {
     public function __construct(
         private readonly CategoryRepositoryInterface $categoryRepository,
-        private readonly EventBusInterface $eventBus,
-    ) {
+        private readonly EventBusInterface           $eventBus,
+    )
+    {
     }
 
     /**
@@ -31,9 +33,9 @@ class CreateCategoryHandler
         }
 
         $category = Category::create(
-            UuidValueObject::fromValue($command->id),
+            CategoryId::fromValue($command->id),
             CategoryName::fromValue($command->name),
-            UuidValueObject::fromValue($command->loggedUserId),
+            UserId::fromValue($command->loggedUserId),
         );
         $this->categoryRepository->save($category);
 

@@ -2,7 +2,6 @@
 
 namespace App\Tests\unit\Memories\Application\CreateMemory;
 
-use App\Categories\Domain\CustomException;
 use App\Memories\Application\CreateMemory\CreateMemoryCommand;
 use App\Memories\Application\CreateMemory\CreateMemoryHandler;
 use App\Memories\Domain\ForbiddenWords\ForbiddenWordChecker;
@@ -13,6 +12,7 @@ use App\Memories\Domain\SameTypeAndNameChecker;
 use App\Memories\Domain\SameTypeAndNameException;
 use App\Shared\Domain\Clock;
 use App\Shared\Domain\EventBusInterface;
+use App\Shared\Domain\Exceptions\CustomException;
 use PHPUnit\Framework\TestCase;
 
 class CreateMemoryHandlerTest extends TestCase

@@ -2,7 +2,7 @@
 
 namespace App\Memories\Domain;
 
-use App\Categories\Domain\CustomException;
+use App\Shared\Domain\Exceptions\CustomException;
 use App\Shared\Domain\StringValueObject;
 
 class MemoryName extends StringValueObject
@@ -21,7 +21,8 @@ class MemoryName extends StringValueObject
     /**
      * @throws CustomException
      */
-    public static function fromValue(string $value): self {
+    public static function fromValue(string $value): self
+    {
         return new self($value);
     }
 }

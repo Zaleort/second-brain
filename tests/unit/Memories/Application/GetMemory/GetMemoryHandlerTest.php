@@ -2,15 +2,12 @@
 
 namespace App\Tests\unit\Memories\Application\GetMemory;
 
-use App\Categories\Domain\CustomException;
 use App\Memories\Application\GetMemory\GetMemoryCommand;
 use App\Memories\Application\GetMemory\GetMemoryHandler;
 use App\Memories\Domain\Memory;
-use App\Memories\Domain\MemoryCategories;
-use App\Memories\Domain\MemoryName;
 use App\Memories\Domain\MemoryRepositoryInterface;
-use App\Memories\Domain\MemoryType;
-use App\Shared\Domain\UuidValueObject;
+use App\Shared\Domain\Exceptions\CustomException;
+use App\Shared\Domain\Uuid;
 use App\Tests\Mothers\MemoryMother;
 use PHPUnit\Framework\TestCase;
 
@@ -29,7 +26,7 @@ class GetMemoryHandlerTest extends TestCase
         $repository = $this->createMock(MemoryRepositoryInterface::class);
         $repository->expects($spy = self::any())
             ->method('findById')
-            ->with(UuidValueObject::fromValue($this->memory->getId()->value))
+            ->with(Uuid::fromValue($this->memory->getId()->value))
             ->willReturn($this->memory);
 
         $handler = new GetMemoryHandler($repository);

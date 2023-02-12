@@ -5,7 +5,7 @@ namespace App\Tests\unit\Memories\Application\DeleteMemory;
 use App\Memories\Application\DeleteMemory\DeleteMemoryCommand;
 use App\Memories\Application\DeleteMemory\DeleteMemoryHandler;
 use App\Memories\Domain\MemoryRepositoryInterface;
-use App\Shared\Domain\UuidValueObject;
+use App\Shared\Domain\Uuid;
 use PHPUnit\Framework\TestCase;
 
 class DeleteMemoryHandlerTest extends TestCase
@@ -20,7 +20,7 @@ class DeleteMemoryHandlerTest extends TestCase
     public function test_deleteMemory_deletes_memory()
     {
         $repository = $this->createMock(MemoryRepositoryInterface::class);
-        $repository->expects($spy = self::any())->method('delete')->with(UuidValueObject::fromValue($this->memoryId));
+        $repository->expects($spy = self::any())->method('delete')->with(Uuid::fromValue($this->memoryId));
 
         $handler = new DeleteMemoryHandler($repository);
         $command = new DeleteMemoryCommand($this->memoryId);

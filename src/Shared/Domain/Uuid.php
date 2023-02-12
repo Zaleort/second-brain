@@ -2,15 +2,14 @@
 
 namespace App\Shared\Domain;
 
-use App\Categories\Domain\CustomException;
-use Ramsey\Uuid\Uuid;
+use App\Shared\Domain\Exceptions\CustomException;
 
-class UuidValueObject
+class Uuid
 {
     /**
      * @throws CustomException
      */
-    private function __construct(public readonly string $value)
+    protected function __construct(public readonly string $value)
     {
         if (strlen($value) !== 36) {
             throw new CustomException('El uuid no es válido');
@@ -20,7 +19,8 @@ class UuidValueObject
     /**
      * @throws CustomException
      */
-    public static function fromValue(string $id): self {
-        return new self($id);
+    public static function fromValue(string $id): static
+    {
+        return new static($id);
     }
 }

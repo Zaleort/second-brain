@@ -2,8 +2,8 @@
 
 namespace App\Tests\unit\Memories\Domain;
 
-use App\Categories\Domain\CustomException;
 use App\Memories\Domain\MemoryContent;
+use App\Shared\Domain\Exceptions\CustomException;
 use App\Tests\Mothers\MemoryMother;
 use PHPUnit\Framework\TestCase;
 

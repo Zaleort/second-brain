@@ -4,10 +4,9 @@ declare(strict_types=1);
 
 namespace App\Shared\Infrastructure;
 
-use App\Categories\Domain\CustomException;
-use App\Shared\Domain\JwtManagerInterface;
-use App\Shared\Domain\UuidValueObject;
-use App\Users\Domain\UserRepositoryInterface;
+use App\Shared\Domain\Exceptions\CustomException;
+use App\Users\Domain\UserId;
+use App\Users\Infrastructure\UserRepository;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -18,10 +17,20 @@ use Symfony\Component\HttpKernel\Event\RequestEvent;
 class RequestListener
 {
     public function __construct(
-        private readonly UserRepositoryInterface $userRepository,
+        private readonly UserRepository  $userRepository,
+        private readonly JwtManager      $jwtManager,
+        private readonly TokenExtractor  $tokenExtractor,
         private readonly LoggerInterface $logger,
-        private readonly JwtManagerInterface $jwtManager,
-    ) {
+    )
+    {
+    }
+
+    #[AsEventListener]
+    public function onKernelRequest(RequestEvent $event): void
+    {
+        if (!$event->isMainRequest()) {
+            return;
+        }
     }
 
     /**
@@ -35,27 +44,11 @@ class RequestListener
             return;
         }
 
-        $token = $event->getRequest()->query->get('token');
-        if (!$token) {
-            throw new CustomException('Token required', 401);
-        }
-
+        $token = $this->tokenExtractor->getToken($event->getRequest());
         $payload = $this->jwtManager->decode($token);
-        $user = $this->userRepository->findById(UuidValueObject::fromValue($payload->id));
-
-        if (!$user) {
-            throw new CustomException('Unauthorized', 401);
-        }
+        $user = $this->userRepository->findById(UserId::fromValue($payload->id));
 
         $event->getRequest()->server->set('user', $user);
-    }
-
-    #[AsEventListener]
-    public function onKernelRequest(RequestEvent $event): void
-    {
-        if (!$event->isMainRequest()) {
-            return;
-        }
     }
 
     #[AsEventListener]
@@ -63,7 +56,8 @@ class RequestListener
     {
         $exception = $event->getThrowable();
         $response = new JsonResponse([
-            'message' => $exception->getMessage()
+            'message' => $exception->getMessage(),
+            'trace' => $_ENV['APP_ENV'] === 'dev' ? $exception->getTrace() : null,
         ], $exception instanceof CustomException ? $exception->getHttpCode() : 500);
 
         $event->setResponse($response);

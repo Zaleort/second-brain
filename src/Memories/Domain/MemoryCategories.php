@@ -2,8 +2,8 @@
 
 namespace App\Memories\Domain;
 
-use App\Categories\Domain\CustomException;
-use App\Shared\Domain\UuidValueObject;
+use App\Shared\Domain\Exceptions\CustomException;
+use App\Shared\Domain\Uuid;
 
 class MemoryCategories
 {
@@ -20,19 +20,19 @@ class MemoryCategories
     {
         $memoryCategories = new self();
         foreach ($categories as $categoryId) {
-            $memoryCategories->add(UuidValueObject::fromValue($categoryId));
+            $memoryCategories->add(Uuid::fromValue($categoryId));
         }
 
         return $memoryCategories;
     }
 
-    public function add(UuidValueObject $categoryId): void
+    public function add(Uuid $categoryId): void
     {
         $this->categories[] = $categoryId;
     }
 
     /**
-     * @return UuidValueObject[]
+     * @return Uuid[]
      */
     public function getValues(): array
     {

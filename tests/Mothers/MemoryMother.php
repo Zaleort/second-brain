@@ -2,9 +2,9 @@
 
 namespace App\Tests\Mothers;
 
-use App\Categories\Domain\CustomException;
 use App\Memories\Domain\Memory;
 use App\Memories\Domain\MemoryType;
+use App\Shared\Domain\Exceptions\CustomException;
 use App\Shared\Infrastructure\RamseyUuidGenerator;
 
 class MemoryMother

@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Users\Infrastructure;
 
-use App\Categories\Domain\CustomException;
 use App\Shared\Domain\EmailAddress;
-use App\Shared\Domain\InvalidEmailException;
-use App\Shared\Domain\UuidValueObject;
+use App\Shared\Domain\Exceptions\CustomException;
+use App\Shared\Domain\Exceptions\InvalidEmailException;
+use App\Shared\Domain\Uuid;
 use App\Users\Domain\User;
 use App\Users\Domain\UserRepositoryInterface;
 use Doctrine\ORM\EntityManagerInterface;
@@ -41,7 +41,7 @@ class UserRepository implements UserRepositoryInterface
      * @throws InvalidEmailException
      * @throws CustomException
      */
-    public function findById(UuidValueObject $id): ?User
+    public function findById(Uuid $id): ?User
     {
         $repository = $this->entityManager->getRepository(DoctrineUser::class);
         $doctrineUser = $repository->find($id->value);

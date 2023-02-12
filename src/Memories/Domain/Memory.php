@@ -2,40 +2,42 @@
 
 namespace App\Memories\Domain;
 
-use App\Categories\Domain\CustomException;
 use App\Categories\Domain\ForbiddenNameException;
 use App\Memories\Domain\ForbiddenWords\ForbiddenWordChecker;
 use App\Shared\Domain\Entity;
-use App\Shared\Domain\UuidValueObject;
+use App\Shared\Domain\Exceptions\CustomException;
+use App\Users\Domain\UserId;
 use DateTimeImmutable;
 
 class Memory extends Entity
 {
     private function __construct(
-        private readonly UuidValueObject $id,
-        private readonly MemoryName $name,
-        private readonly MemoryType $type,
+        private readonly MemoryId          $id,
+        private readonly MemoryName        $name,
+        private readonly MemoryType        $type,
         private readonly DateTimeImmutable $createdAt,
-        private readonly MemoryCategories $categories,
-        private readonly UuidValueObject $userId,
-        private ?MemoryContent $content,
-        private ?DateTimeImmutable $modifiedAt,
-    ) {
+        private readonly MemoryCategories  $categories,
+        private readonly UserId            $userId,
+        private ?MemoryContent             $content,
+        private ?DateTimeImmutable         $modifiedAt,
+    )
+    {
     }
 
     /**
      * @throws ForbiddenNameException
      */
     public static function create(
-        UuidValueObject $id,
-        MemoryName $name,
-        MemoryType $type,
-        DateTimeImmutable $createdAt,
-        MemoryCategories $categories,
-        UuidValueObject $userId,
-        MemoryContent|null $content,
+        MemoryId             $id,
+        MemoryName           $name,
+        MemoryType           $type,
+        DateTimeImmutable    $createdAt,
+        MemoryCategories     $categories,
+        UserId               $userId,
+        MemoryContent|null   $content,
         ForbiddenWordChecker $forbiddenWordChecker,
-    ): self {
+    ): self
+    {
         $forbiddenWordChecker->assert($content?->value);
 
         $memory = new self($id, $name, $type, $createdAt, $categories, $userId, $content, null);
@@ -48,21 +50,22 @@ class Memory extends Entity
      * @throws CustomException
      */
     public static function fromPrimitives(
-        string $id,
-        string $name,
-        int $type,
+        string            $id,
+        string            $name,
+        int               $type,
         DateTimeImmutable $createdAt,
-        array $categories,
-        string $userId,
-        ?string $content
-    ): self {
+        array             $categories,
+        string            $userId,
+        ?string           $content
+    ): self
+    {
         return new self(
-            UuidValueObject::fromValue($id),
+            MemoryId::fromValue($id),
             MemoryName::fromValue($name),
             MemoryType::fromValue($type),
             $createdAt,
             MemoryCategories::fromArray($categories),
-            UuidValueObject::fromValue($userId),
+            UserId::fromValue($userId),
             $content ? MemoryContent::fromValue($content) : null,
             null,
         );
@@ -86,7 +89,7 @@ class Memory extends Entity
         $this->events[] = new ContentUpdated($this->id->value);
     }
 
-    public function getId(): UuidValueObject
+    public function getId(): MemoryId
     {
         return $this->id;
     }
@@ -111,7 +114,7 @@ class Memory extends Entity
         return $this->categories;
     }
 
-    public function getUserId(): UuidValueObject
+    public function getUserId(): UserId
     {
         return $this->userId;
     }

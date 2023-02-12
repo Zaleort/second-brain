@@ -2,11 +2,11 @@
 
 namespace App\Memories\Infrastructure;
 
-use App\Categories\Domain\CustomException;
 use App\Categories\Infrastructure\DoctrineCategory;
 use App\Memories\Domain\Memory;
 use App\Memories\Domain\MemoryRepositoryInterface;
-use App\Shared\Domain\UuidValueObject;
+use App\Shared\Domain\Exceptions\CustomException;
+use App\Shared\Domain\Uuid;
 use Doctrine\ORM\EntityManagerInterface;
 
 class MemoryRepository implements MemoryRepositoryInterface
@@ -18,7 +18,7 @@ class MemoryRepository implements MemoryRepositoryInterface
     /**
      * @throws CustomException
      */
-    public function findById(UuidValueObject $id): ?Memory
+    public function findById(Uuid $id): ?Memory
     {
         $doctrineMemory = $this->entityManager->getRepository(DoctrineMemory::class)->find($id->value);
         if (!$doctrineMemory) {
@@ -87,7 +87,7 @@ class MemoryRepository implements MemoryRepositoryInterface
     /**
      * @throws CustomException
      */
-    public function delete(UuidValueObject $id): void
+    public function delete(Uuid $id): void
     {
         $memory = $this->entityManager->find(DoctrineMemory::class, $id->value);
         if (!$memory) {

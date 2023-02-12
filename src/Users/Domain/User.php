@@ -4,26 +4,26 @@ declare(strict_types=1);
 
 namespace App\Users\Domain;
 
-use App\Categories\Domain\CustomException;
-use App\Shared\Domain\EmailAddress;
 use App\Shared\Domain\Entity;
-use App\Shared\Domain\InvalidEmailException;
-use App\Shared\Domain\UuidValueObject;
+use App\Shared\Domain\Exceptions\CustomException;
+use App\Shared\Domain\Exceptions\InvalidEmailException;
 
 class User extends Entity
 {
     private function __construct(
-        private readonly UuidValueObject $id,
-        private readonly EmailAddress $email,
-        private readonly Password $password,
-    ) {
+        private readonly UserId       $id,
+        private readonly UserEmail    $email,
+        private readonly UserPassword $password,
+    )
+    {
     }
 
     public static function create(
-        UuidValueObject $id,
-        EmailAddress $email,
-        Password $password,
-    ): self {
+        UserId       $id,
+        UserEmail    $email,
+        UserPassword $password,
+    ): self
+    {
         return new self($id, $email, $password);
     }
 
@@ -35,25 +35,26 @@ class User extends Entity
         string $id,
         string $email,
         string $password,
-    ): self {
+    ): self
+    {
         return new self(
-            UuidValueObject::fromValue($id),
-            EmailAddress::fromValue($email),
-            new Password($password),
+            UserId::fromValue($id),
+            UserEmail::fromValue($email),
+            UserPassword::fromValue($password),
         );
     }
 
-    public function getId(): UuidValueObject
+    public function getId(): UserId
     {
         return $this->id;
     }
 
-    public function getEmail(): EmailAddress
+    public function getEmail(): UserEmail
     {
         return $this->email;
     }
 
-    public function getPassword(): Password
+    public function getPassword(): UserPassword
     {
         return $this->password;
     }

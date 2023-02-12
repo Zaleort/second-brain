@@ -6,9 +6,9 @@ namespace App\Users\Domain;
 
 use App\Shared\Domain\StringValueObject;
 
-class Password extends StringValueObject
+class UserPassword extends StringValueObject
 {
-    public static function encode(string $password): Password
+    public static function encode(string $password): UserPassword
     {
         return new self(password_hash($password, PASSWORD_BCRYPT));
     }

@@ -2,9 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Shared\Domain;
-
-use App\Categories\Domain\CustomException;
+namespace App\Shared\Domain\Exceptions;
 
 class InvalidEmailException extends CustomException
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Categories\Domain;
+namespace App\Shared\Domain\Exceptions;
 
 class CustomException extends \Exception
 {

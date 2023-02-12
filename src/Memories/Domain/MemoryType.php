@@ -2,7 +2,7 @@
 
 namespace App\Memories\Domain;
 
-use App\Categories\Domain\CustomException;
+use App\Shared\Domain\Exceptions\CustomException;
 
 class MemoryType
 {

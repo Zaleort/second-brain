@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Users\Infrastructure;
 
-use App\Users\Domain\Password;
+use App\Users\Domain\UserPassword;
 use App\Users\Domain\User;
 use App\Users\Domain\UserRepositoryInterface;
 use Symfony\Component\Console\Command\Command;
@@ -22,7 +22,7 @@ class HashPasswordsCommand extends Command
     {
         $users = $this->userRepository->findAll();
         foreach ($users as $user) {
-            $password = Password::encode($user->getPassword()->value);
+            $password = UserPassword::encode($user->getPassword()->value);
             $updatedUser = User::fromPrimitives(
                 $user->getId()->value,
                 $user->getEmail()->value,
