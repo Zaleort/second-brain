@@ -1,8 +1,9 @@
 package com.zaleort.second_brain.Memories.Infrastructure.Repository
 
 import org.springframework.data.jpa.repository.JpaRepository
-import java.util.UUID
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor
+import java.util.*
 
-interface JpaMemoryRepository : JpaRepository<MemoryEntity, String> {
+interface JpaMemoryRepository : JpaRepository<MemoryEntity, String>, JpaSpecificationExecutor<MemoryEntity> {
     fun findByUserId(userId: UUID): List<MemoryEntity>
 }
