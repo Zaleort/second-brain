@@ -1,8 +1,9 @@
 package com.zaleort.second_brain.Tags.Infrastructure.Repository
 
 import org.springframework.data.jpa.repository.JpaRepository
-import java.util.UUID
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor
+import java.util.*
 
-interface JpaTagRepository : JpaRepository<TagEntity, UUID> {
+interface JpaTagRepository : JpaRepository<TagEntity, UUID>, JpaSpecificationExecutor<TagEntity> {
     fun findByUserId(userId: UUID): List<TagEntity>
 }
