@@ -44,12 +44,20 @@ class TagRepository(
     }
 
     override fun save(tag: Tag) {
-        val tagEntity = TagEntity(
-            id = tag.id.toUUID(),
-            userId = tag.userId.toUUID(),
-            name = tag.name.value,
-            color = tag.color?.value,
-        )
+        val existingTag = jpaTagRepository.findById(tag.id.toUUID())
+        val tagEntity = if (existingTag.isPresent) {
+            existingTag.get().apply {
+                name = tag.name.value
+                color = tag.color?.value
+            }
+        } else {
+            TagEntity(
+                id = tag.id.toUUID(),
+                userId = tag.userId.toUUID(),
+                name = tag.name.value,
+                color = tag.color?.value,
+            )
+        }
 
         jpaTagRepository.save(tagEntity)
     }

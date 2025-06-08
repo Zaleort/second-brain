@@ -6,6 +6,7 @@ import com.zaleort.second_brain.Memories.Domain.Memory.MemoryRepositoryInterface
 import com.zaleort.second_brain.Memories.Domain.Memory.MemorySearchParams
 import com.zaleort.second_brain.Shared.Domain.QueryFilter.OrderDirection
 import com.zaleort.second_brain.Shared.Domain.QueryFilter.PaginatedResult
+import com.zaleort.second_brain.Tags.Infrastructure.Repository.JpaTagRepository
 import com.zaleort.second_brain.Tags.Infrastructure.Repository.TagEntity
 import com.zaleort.second_brain.Users.Domain.User.UserId
 import jakarta.persistence.criteria.Predicate
@@ -21,9 +22,10 @@ import java.util.*
 @Repository
 class MemoryRepository(
     private val memoryJpaRepository: JpaMemoryRepository,
+    private val tagJpaRepository: JpaTagRepository,
 ) : MemoryRepositoryInterface {
     override fun findById(id: MemoryId): Memory? {
-        val memoryEntity = memoryJpaRepository.findById(id.value).orElse(null)
+        val memoryEntity = memoryJpaRepository.findById(id.toUUID()).orElse(null)
         val tags: List<Map<String, String?>> = memoryEntity.tags.map { tag ->
             mapOf(
                 "id" to tag.id.toString(),
@@ -70,29 +72,37 @@ return memoryEntities.map {
     }
 
     override fun save(memory: Memory) {
-        val entityTags = memory.tags.map { TagEntity(
-            id = UUID.fromString(it.id),
-            userId = memory.userId.toUUID(),
-            name = it.name,
-            color = it.color,
-        ) }
+        val entityTags = memory.tags.map {
+            tagJpaRepository.getReferenceById(UUID.fromString(it.id))
+        }
 
-        val memoryEntity = MemoryEntity(
-            id = memory.id.toUUID(),
-            userId = memory.userId.toUUID(),
-            title = memory.title.value,
-            content = memory.content.value,
-            type = memory.type.value,
-            tags = entityTags,
-            createdAt = memory.createdAt.toInstant(ZoneOffset.UTC),
-            updatedAt = memory.updatedAt?.toInstant(ZoneOffset.UTC),
-        )
+        val existing = memoryJpaRepository.findById(memory.id.toUUID())
+        val memoryEntity = if (existing.isPresent) {
+            val existingMemory = existing.get()
+            existingMemory.title = memory.title.value
+            existingMemory.content = memory.content.value
+            existingMemory.type = memory.type.value
+            existingMemory.tags = entityTags
+            existingMemory.updatedAt = Instant.now()
+            existingMemory
+        } else {
+            MemoryEntity(
+                id = memory.id.toUUID(),
+                userId = memory.userId.toUUID(),
+                title = memory.title.value,
+                content = memory.content.value,
+                type = memory.type.value,
+                tags = entityTags,
+                createdAt = memory.createdAt.toInstant(ZoneOffset.UTC),
+                updatedAt = memory.updatedAt?.toInstant(ZoneOffset.UTC),
+            )
+        }
 
         memoryJpaRepository.save(memoryEntity)
     }
 
     override fun deleteById(id: MemoryId) {
-        val memoryEntity = memoryJpaRepository.findById(id.value).orElse(null)
+        val memoryEntity = memoryJpaRepository.findById(id.toUUID()).orElse(null)
         if (memoryEntity == null) {
             throw Exception("Memory not found: " + id.value)
         }

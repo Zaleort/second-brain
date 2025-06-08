@@ -1,21 +1,13 @@
 package com.zaleort.second_brain.Memories.Infrastructure.Repository
 
 import com.zaleort.second_brain.Tags.Infrastructure.Repository.TagEntity
-import jakarta.persistence.CascadeType
-import jakarta.persistence.Column
-import jakarta.persistence.Entity
-import jakarta.persistence.GeneratedValue
-import jakarta.persistence.GenerationType
-import jakarta.persistence.Id
-import jakarta.persistence.JoinTable
-import jakarta.persistence.ManyToMany
+import jakarta.persistence.*
 import java.time.Instant
-import java.util.UUID
+import java.util.*
 
 @Entity(name = "memories")
 class MemoryEntity(
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
     var id: UUID? = null,
 
     @Column(name = "user_id", nullable = false)
