@@ -1,7 +1,7 @@
 package com.zaleort.second_brain.Memories.Domain.Memory
 
 import com.zaleort.second_brain.Users.Domain.User.UserId
-import java.time.LocalDateTime
+import java.time.Instant
 
 class Memory private constructor(
     val id: MemoryId,
@@ -10,8 +10,8 @@ class Memory private constructor(
     var content: MemoryContent,
     var type: MemoryType,
     var tags: List<MemoryTag>,
-    val createdAt: LocalDateTime,
-    var updatedAt: LocalDateTime?,
+    val createdAt: Instant,
+    var updatedAt: Instant?,
 ) {
     fun update(
         title: MemoryTitle,
@@ -23,7 +23,7 @@ class Memory private constructor(
         this.content = content
         this.type = type
         this.tags = tags
-        this.updatedAt = LocalDateTime.now()
+        this.updatedAt = Instant.now()
     }
 
     companion object {
@@ -42,7 +42,7 @@ class Memory private constructor(
                 content = content,
                 type = type,
                 tags = tags,
-                createdAt = LocalDateTime.now(),
+                createdAt = Instant.now(),
                 updatedAt = null
             )
         }
@@ -70,8 +70,8 @@ class Memory private constructor(
                         it["color"] ?: "",
                     )
                 },
-                createdAt = LocalDateTime.parse(createdAt),
-                updatedAt = updatedAt?.let { LocalDateTime.parse(it) }
+                createdAt = Instant.parse(createdAt),
+                updatedAt = updatedAt?.let { Instant.parse(it) }
             )
         }
     }

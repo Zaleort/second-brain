@@ -19,28 +19,28 @@ class GetMemoriesController(
     @GetMapping("/api/v1/memories")
     fun getMemories(
         @AuthenticationPrincipal user: UserDetails,
-        @RequestParam(required = false) page: Int,
-        @RequestParam(required = false) limit: Int,
-        @RequestParam(required = false) orderBy: String,
-        @RequestParam(required = false) orderDirection: String,
-        @RequestParam(required = false) title: String,
-        @RequestParam(required = false) tags: List<String>,
-        @RequestParam(required = false) content: String,
-        @RequestParam(required = false) type: Int,
-        @RequestParam(required = false) createdAtFrom: String,
-        @RequestParam(required = false) createdAtTo: String,
+        @RequestParam(required = false) page: Int?,
+        @RequestParam(required = false) limit: Int?,
+        @RequestParam(required = false) orderBy: String?,
+        @RequestParam(required = false) orderDirection: String?,
+        @RequestParam(required = false) title: String?,
+        @RequestParam(required = false) tags: List<String>?,
+        @RequestParam(required = false) content: String?,
+        @RequestParam(required = false) type: Int?,
+        @RequestParam(required = false) createdAtFrom: String?,
+        @RequestParam(required = false) createdAtTo: String?,
     ): ResponseEntity<PaginatedResult<MemoryDTO>> {
 
         val userId = user.username
         val memories = handler.execute(GetMemoriesCommand(
-            page,
-            limit,
-            orderBy,
-            orderDirection,
+            page = page ?: 0,
+            limit = limit ?: 12,
+            orderBy = orderBy ?: "createdAt",
+            orderDirection = orderDirection ?: "DESC",
             userId = userId,
             title,
             content,
-            tags,
+            tags = tags ?: emptyList(),
             type,
             createdAtFrom,
             createdAtTo

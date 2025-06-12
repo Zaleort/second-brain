@@ -93,8 +93,8 @@ return memoryEntities.map {
                 content = memory.content.value,
                 type = memory.type.value,
                 tags = entityTags,
-                createdAt = memory.createdAt.toInstant(ZoneOffset.UTC),
-                updatedAt = memory.updatedAt?.toInstant(ZoneOffset.UTC),
+                createdAt = memory.createdAt,
+                updatedAt = memory.updatedAt,
             )
         }
 
@@ -154,34 +154,47 @@ return memoryEntities.map {
             val predicates = mutableListOf<Predicate>()
 
             params.userId?.let {
-                predicates.add(cb.equal(root.get<UUID>("userId"), UUID.fromString(it)))
+                runCatching { UUID.fromString(it) }.getOrNull()?.let { userId ->
+                    predicates.add(cb.equal(root.get<UUID>("userId"), userId))
+                }
             }
 
-            params.title?.let {
-                predicates.add(cb.like(cb.lower(root.get<String>("title")), "%${it.lowercase()}%"))
+            params.title?.takeIf { it.isNotBlank() }?.let {
+                predicates.add(cb.like(cb.lower(root.get("title")), "%${it.lowercase()}%"))
             }
 
-            params.content?.let {
-                predicates.add(cb.like(cb.lower(root.get<String>("content")), "%${it.lowercase()}%"))
+            params.content?.takeIf { it.isNotBlank() }?.let {
+                predicates.add(cb.like(cb.lower(root.get("content")), "%${it.lowercase()}%"))
             }
 
             params.type?.let {
                 predicates.add(cb.equal(root.get<Int>("type"), it))
             }
 
-            params.tags?.let { tags ->
-                val tagJoin = root.join<MemoryEntity, TagEntity>("tags")
-                predicates.add(tagJoin.get<String>("id").`in`(tags))
+            if (!params.tags.isNullOrEmpty()) {
+                val parsedTags = params.tags.mapNotNull {
+                    runCatching { UUID.fromString(it) }.getOrNull()
+                }
+                if (parsedTags.isNotEmpty()) {
+                    val tagJoin = root.join<MemoryEntity, TagEntity>("tags")
+                    predicates.add(tagJoin.get<UUID>("id").`in`(parsedTags))
+                }
             }
 
             params.createdAtFrom?.let {
-                val date = Instant.parse(it).atZone(ZoneOffset.UTC).toInstant()
-                predicates.add(cb.greaterThanOrEqualTo(root.get("createdAt"), date))
+                runCatching {
+                    Instant.parse(it).atZone(ZoneOffset.UTC).toInstant()
+                }.getOrNull()?.let { date ->
+                    predicates.add(cb.greaterThanOrEqualTo(root.get("createdAt"), date))
+                }
             }
 
             params.createdAtTo?.let {
-                val date = Instant.parse(it).atZone(ZoneOffset.UTC).toInstant()
-                predicates.add(cb.lessThanOrEqualTo(root.get("createdAt"), date))
+                runCatching {
+                    Instant.parse(it).atZone(ZoneOffset.UTC).toInstant()
+                }.getOrNull()?.let { date ->
+                    predicates.add(cb.lessThanOrEqualTo(root.get("createdAt"), date))
+                }
             }
 
             cb.and(*predicates.toTypedArray())
