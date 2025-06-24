@@ -17,16 +17,27 @@ class UpdateMemoryController(val handler: UpdateMemoryHandler) {
     @PutMapping("/api/v1/memories/{id}")
     fun updateMemory(
         @PathVariable id: String,
-        @RequestBody command: UpdateMemoryCommand,
+        @RequestBody request: UpdateMemoryRequest,
         @AuthenticationPrincipal user: UserDetails,
     ): ResponseEntity<MemoryDTO> {
-        val commandWithId = command.copy(
+        val command = UpdateMemoryCommand(
             id = id,
-            userId = user.username
+            userId = user.username,
+            title = request.title,
+            content = request.content,
+            type = request.type,
+            tags = request.tags,
         )
         return ResponseEntity(
-            handler.execute(commandWithId),
+            handler.execute(command),
             HttpStatus.OK,
         )
     }
 }
+
+data class UpdateMemoryRequest(
+    val title: String,
+    val content: String,
+    val type: Int,
+    val tags: List<String>,
+)
